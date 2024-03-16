@@ -1,0 +1,128 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title>Generate Models</title>
+    </head>
+    <style type="text/css">
+
+        .main{
+            margin:10px auto;
+            width:90%;
+            max-width:1200px;
+            height:1200px;
+        }
+        .chatOper{
+            padding:15px;
+            margin:0;
+            background-color:#eee;
+        }
+        .chatInfo{
+            height:85%;
+            overflow-x:hidden;
+            overflow-y:auto;
+            padding:30px 20px;
+            margin:10px 0 0 0;
+            border:1px solid #ccc;
+            border-radius:5px;
+            background-color:lightgreen;
+            font-size:20px;
+            line-height:22px;
+            color:#393939;
+        }
+
+        #chatContext{
+            width:90%;
+            height:50px;
+            background-color: lightblue;
+            line-height:45px;
+            display: inline-flex;
+            vertical-align:middle;
+            font-family: Serif, Arial, serif;
+            font-size:20px;
+            color: #0f0f0f;
+            padding:5px;
+        }
+        #chatText{
+            width:80%;
+            height:45px;
+            line-height:45px;
+            display: inline-flex;
+            vertical-align:middle;
+            font-family: Serif, Arial, serif;
+            font-size:20px;
+            background-color: lightgray;
+            padding:5px;
+        }
+        #submitBtn{
+            display: inline-flex;
+            padding:10px 20px;
+            vertical-align:middle;
+        }
+
+    </style>
+    <body>
+    <br>
+     <div class="container" style="border: solid 2px #D1D1D1;">
+        <div class="main">
+            <div class="chatOper">
+                <input type="text" id="chatContext" placeholder="Beschreiben Sie den Kontext." /><br><br>
+                <input type="text" id="chatText" placeholder="Was soll ich tun?" />
+                <input type="button" value="Erstellen" id="submitBtn" class="btn btn-primary" />
+            </div>
+         <div class="chatInfo"></div>
+        </div>
+     </div>
+    </body>
+    <script src="{{ url_for('static',filename='jquery.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='marked.min.js')}}"></script>
+    <script language="javascript">
+    <!--
+        $(function() {
+
+            // enter push
+            $(document).keydown(function(event){
+            if(event.keyCode==13){
+                $("#submitBtn").click();
+                return false;
+            }
+            });
+
+            $("#chatText").focus();
+            $("#submitBtn").click(function(){
+                $(this).attr("disabled",true);
+                $(this).val("....");
+                var q = $("#chatText").val();
+                var c = $("#chatContext").val();
+                if(q==''){
+                    $(".chatInfo").html("Beschreiben Sie Ihre Frage...");
+                    $(this).removeAttr("disabled");
+                    $(this).val("发送");
+                    $("#chatText").focus();
+                    return;
+                }
+                var eventEn = false;
+                $(".chatInfo").html("Ich erstelle...");
+                var source = new EventSource("/generate?question="+q+"&context="+c);
+                source.onmessage = function(event){
+                    if (eventEn === false){
+                        eventEn = true;
+                        $(".chatInfo").html("");
+                    }
+                    if(event.data == "[DONE]"){
+                        $("#submitBtn").removeAttr("disabled");
+                        $("#submitBtn").val("Erstellen");
+                        $("#chatText").val('');
+                        $("#chatText").focus();
+                        source.close();
+                    }else{
+                        $(".chatInfo").html($(".chatInfo").html() + event.data);
+                    }
+                }
+            });
+        });
+    -->
+    </script>
+</html>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+{% block content %}
+ <br>
+      <div class="container" style="border: solid 2px #D1D1D1;">
+
+      {% if report %}
+           <table >
+           {% for dictionary in report %}
+               {% for key in dictionary %}
+               <tr>
+               <td>{{  key }}</td>
+        <td>{{  dictionary[key] }}</td>
+                    </tr>
+           {% endfor %}
+     {% endfor %}
+      {% endif %}
+ </table>
+      </div>
+
+{% endblock %}
