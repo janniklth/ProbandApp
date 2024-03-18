@@ -1,0 +1,12 @@
+# Python compiled files
+*.pyc
+__pycache__/
+
+# Environment variables
+.env
+
+# PyCharm files
+.idea/
+
+# macOS files
+.DS_Store
