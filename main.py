@@ -27,7 +27,7 @@ DB_CONFIG = {
     "MYSQL_USER": "root",
     "MYSQL_PASSWORD": "change-me",
     "MYSQL_DB": "dbproject",
-    "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1/dbproject",
+    "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1:3306/dbproject",
 }
 
 app.config.update(DB_CONFIG)
