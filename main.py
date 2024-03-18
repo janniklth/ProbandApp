@@ -134,7 +134,6 @@ with app.app_context():
                             current_table = line.replace("-- ", "")
                             current_table = current_table.replace(" ", "")
 
-
                         if line != "" and line != f"-- {current_table}":
                             if current_table == "Medikament":
                                 conn.execute(text(f"INSERT INTO Medication (name) VALUES ({line});"))
@@ -154,7 +153,6 @@ with app.app_context():
                 print("we seeded the db succesfully")
             except Exception as this_no_worky:
                 print(f" {this_no_worky}")
-
 
 
 @app.route('/probands', methods=['POST', 'GET'])
