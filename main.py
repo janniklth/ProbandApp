@@ -25,9 +25,9 @@ app.secret_key = "super secret key"
 DB_CONFIG = {
     "MYSQL_HOST": "127.0.0.1",
     "MYSQL_USER": "root",
-    "MYSQL_PASSWORD": "Windows0302",
+    "MYSQL_PASSWORD": "change-me",
     "MYSQL_DB": "dbproject",
-    "SQLALCHEMY_DATABASE_URI": "mysql://root:Windows0302@127.0.0.1/dbproject",
+    "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1/dbproject",
 }
 
 app.config.update(DB_CONFIG)
