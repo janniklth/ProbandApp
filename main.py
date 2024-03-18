@@ -1,10 +1,12 @@
+from random import random, randint
+
 import sqlalchemy
 import flask
 from flask import render_template, request, session, redirect, url_for
 from flask_mysqldb import MySQL
 from flask_paginate import Pagination, get_page_args
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, text
 import datetime
 import os
 import openai
@@ -13,9 +15,9 @@ import json
 
 app = Flask(__name__)
 
-# with open('config.json') as f:
-#     config = json.load(f)
-# openai_api_key = config['openai']['api_key']
+with open('app/config.json') as f:
+    config = json.load(f)
+    openai_api_key = config['openai']['api_key']
 
 app.config['SECRET_KEY'] = os.urandom(24)
 app.secret_key = "super secret key"
@@ -23,9 +25,9 @@ app.secret_key = "super secret key"
 DB_CONFIG = {
     "MYSQL_HOST": "127.0.0.1",
     "MYSQL_USER": "root",
-    "MYSQL_PASSWORD": "change-me",
-    "MYSQL_DB": "dhbw-db_2023_24",
-    "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1/dhbw-db_2023_24",
+    "MYSQL_PASSWORD": "Windows0302",
+    "MYSQL_DB": "dbproject",
+    "SQLALCHEMY_DATABASE_URI": "mysql://root:Windows0302@127.0.0.1/dbproject",
 }
 
 app.config.update(DB_CONFIG)
@@ -101,6 +103,60 @@ def handle_error(e: Exception):
     print(e)
 
 
+with app.app_context():
+    with db.engine.connect() as conn:
+        with open("initial.sql", 'r') as file:
+            content = file.read()
+            transaction = conn.begin()
+            try:
+                for command in content.split(";"):
+                    if command.strip() != "":
+                        conn.execute(text(command))
+                transaction.commit()
+            except Exception as alleskaputt:
+                print(f"Command skipped: {command}")
+                print(alleskaputt)
+                transaction.rollback()
+
+        transaction = conn.begin()
+        probands = conn.execute(text('SELECT * FROM Proband;')).fetchall()
+        if len(probands) == 0:
+            print("No entries, first setup, seeding the database with data :))")
+            try:
+                with open("Daten.sql", 'r', encoding='utf-8') as dada:
+                    lines = dada.readlines()
+
+                    current_table = ""
+
+                    for line in lines:
+                        line = line.replace("\n", "")
+                        if line.startswith("-- "):
+                            current_table = line.replace("-- ", "")
+                            current_table = current_table.replace(" ", "")
+
+
+                        if line != "" and line != f"-- {current_table}":
+                            if current_table == "Medikament":
+                                conn.execute(text(f"INSERT INTO Medication (name) VALUES ({line});"))
+                            if current_table == "Krankheit":
+                                conn.execute(text(f"INSERT INTO Sickness (name) VALUES ({line});"))
+                            if current_table == "Geschlecht":
+                                conn.execute(text(f"INSERT INTO Gender (name) VALUES ({line});"))
+                            if current_table == "Länder":
+                                conn.execute(text(f"INSERT INTO Country (countrycode, name) VALUES ({line});"))
+                            if current_table == "Probanden":
+                                country_id = randint(0, 26)
+                                conn.execute(text(
+                                    f"INSERT INTO Proband (firstname, lastname, email, gender, birthday, weight, height, countryid) VALUES ({line}, {country_id});"))
+
+                conn.execute(text("SET GLOBAL FOREIGN_KEY_CHECKS=1;"))
+                transaction.commit()
+                print("we seeded the db succesfully")
+            except Exception as this_no_worky:
+                print(f" {this_no_worky}")
+
+
+
 @app.route('/probands', methods=['POST', 'GET'])
 def probands():
     if request.method == 'GET':
@@ -113,11 +169,11 @@ def probands():
         pagination_probands = get_probands(probands, offset=offset, per_page=per_page)
         pagination = Pagination(page=page, per_page=per_page, total=total,
                                 css_framework='bootstrap4')
-        return render_template('app/templates/probands.html', probandsList=pagination_probands, genders=genders, page=page,
+        return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
                                per_page=per_page,
                                pagination=pagination)
     else:
-        return render_template('app/templates/probands.html')
+        return render_template('probands.html')
 
 
 def determine_search_string():
@@ -264,17 +320,17 @@ def generate():
                 yield "data: %s\n\n" % data.replace("\n", "<br>")
 
         return flask.Response(stream(), mimetype="text/event-stream")
-    return render_template('app/templates/generate.html')
+    return render_template('generate.html')
 
 
 @app.route('/')
 def index():  # put application's code here
-    return render_template('app/templates/home.html')
+    return render_template('home.html')
 
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
-    return render_template('app/templates/registration.html')
+    return render_template('registration.html')
 
 
 @app.route('/report', methods=["GET", "POST"])
