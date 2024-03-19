@@ -18,5 +18,6 @@ class Proband(Base):
     weight = mapped_column(Float, nullable=False)
     height = mapped_column(Float, nullable=False)
     health = mapped_column(Float, nullable=False)
-    countryid = mapped_column(UUID, ForeignKey("COUNTRY.id", ondelete="SET NULL"), nullable=False)
-    isactive = mapped_column(Boolean, nullable=False)
+    countryId = mapped_column(UUID, ForeignKey("COUNTRY.id", ondelete="SET NULL"), nullable=False)
+    isActive = mapped_column(Boolean, nullable=False)
+    lastChanged = mapped_column(Date, nullable=False)
