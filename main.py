@@ -15,6 +15,9 @@ from flask import Flask
 import json
 
 from schemas.proband import ProbandCreate
+from models.proband import Proband
+
+
 
 app = Flask(__name__)
 
@@ -45,36 +48,36 @@ def get_probands(items, offset=0, per_page=12):
     return items[offset: offset + per_page]
 
 
-class Proband(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    firstname = db.Column(db.String(50), unique=False, nullable=False)
-    lastname = db.Column(db.String(50), unique=False, nullable=False)
-    email = db.Column(db.String(10), unique=True, nullable=False)
-    gender = db.Column(db.String(1), unique=False, nullable=False)
-    birthday = db.Column(db.DateTime, unique=False, nullable=False)
-    height = db.Column(db.Float, unique=False, nullable=False)
-    weight = db.Column(db.Float, unique=False, nullable=False)
-    health = db.Column(db.Float, unique=False, nullable=False)
-    isactive = db.Column(db.Boolean, unique=False, nullable=False)
+# class Proband(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     firstname = db.Column(db.String(50), unique=False, nullable=False)
+#     lastname = db.Column(db.String(50), unique=False, nullable=False)
+#     email = db.Column(db.String(10), unique=True, nullable=False)
+#     gender = db.Column(db.String(1), unique=False, nullable=False)
+#     birthday = db.Column(db.DateTime, unique=False, nullable=False)
+#     height = db.Column(db.Float, unique=False, nullable=False)
+#     weight = db.Column(db.Float, unique=False, nullable=False)
+#     health = db.Column(db.Float, unique=False, nullable=False)
+#     isActive = db.Column(db.Boolean, unique=False, nullable=False)
+#
+#     def __init__(self, firstname, lastname, email, gender, birthday, height, weight, health, isactive):
+#         self.firstname = firstname
+#         self.lastname = lastname
+#         self.email = email
+#         self.gender = gender
+#         self.birthday = birthday
+#         self.height = height
+#         self.weight = weight
+#         self.health = health
+#         self.isActive = isactive
 
-    def __init__(self, firstname, lastname, email, gender, birthday, height, weight, health, isactive):
-        self.firstname = firstname
-        self.lastname = lastname
-        self.email = email
-        self.gender = gender
-        self.birthday = birthday
-        self.height = height
-        self.weight = weight
-        self.health = health
-        self.isactive = isactive
 
-
-class Gender(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True)
-
-    def __init__(self, name):
-        self.name = name
+# class Gender(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(50), unique=True)
+#
+#     def __init__(self, name):
+#         self.name = name
 
 
 def create_proband(firstname: str, lastname: str, email: str, gender: str, birthday: datetime, height: float,
@@ -206,7 +209,7 @@ def probands():
         page, per_page, offset = get_page_args(page_parameter="page",
                                                per_page_parameter="per_page")
         genders = Gender.query.all()
-        probands = Proband.query.filter(Proband.isactive.is_(True)).all()
+        probands = Proband.query.filter(Proband.isActive.is_(True)).all()
         total = len(probands)
         pagination_probands = get_probands(probands, offset=offset, per_page=per_page)
         pagination = Pagination(page=page, per_page=per_page, total=total,
@@ -266,7 +269,7 @@ def delete():
     try:
         email = request.form.get("email")
         proband = Proband.query.filter_by(email=email).first()
-        proband.isactive = False
+        proband.isActive = False
         db.session.commit()
         return redirect(url_for('probands'))
     except Exception as e:
@@ -389,8 +392,8 @@ def report():
     if request.method == 'GET':
 
         probands = Proband.query.all()
-        activeProbands = Proband.query.filter(Proband.isactive.is_(True)).all()
-        inactiveProbands = Proband.query.filter(Proband.isactive.is_(False)).all()
+        activeProbands = Proband.query.filter(Proband.isActive.is_(True)).all()
+        inactiveProbands = Proband.query.filter(Proband.isActive.is_(False)).all()
 
         std = db.session.query(func.stddev(Proband.weight))
         result = db.session.execute(std)
