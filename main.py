@@ -402,30 +402,40 @@ def register():
 @app.route('/report', methods=["GET", "POST"])
 def report():
     if request.method == 'GET':
+        page, per_page, offset = get_page_args(page_parameter="page", per_page_parameter="per_page")
 
-        probands = Proband.query.all()
-        activeProbands = Proband.query.filter(Proband.isActive.is_(True)).all()
-        inactiveProbands = Proband.query.filter(Proband.isActive.is_(False)).all()
+        # Get all genders
+        genders = crud.get_all_genders()
 
-        std = db.session.query(func.stddev(Proband.weight))
-        result = db.session.execute(std)
-        stddevweight = [row[0] for row in result]
+        # Get all probands
+        probands = crud.get_all_active_probands()
 
-        std = db.session.query(func.stddev(Proband.height))
-        result = db.session.execute(std)
-        stddevheight = [row[0] for row in result]
+        # Filter active and inactive probands
+        active_probands = [proband for proband in probands if proband.is_active]
+        inactive_probands = [proband for proband in probands if not proband.is_active]
 
-        totalProbands = len(probands)
-        totalActiveProbands = len(activeProbands)
-        totalInactiveProbands = len(inactiveProbands)
+        # Calculate total probands and counts
+        total_probands = len(probands)
+        total_active_probands = len(active_probands)
+        total_inactive_probands = len(inactive_probands)
 
-        probandReport = [totalProbands, totalActiveProbands, totalInactiveProbands]
-        parent_list = [{'Probanden insgesamt: ': totalProbands, 'Aktive Probanden: ': totalActiveProbands,
-                        'Inaktive Probanden: ': totalInactiveProbands,
-                        'STDDEV Gewicht: ': stddevweight, 'STDDEV Größe: ': stddevheight}]
-        print(probandReport)
+        # Calculate standard deviations
+        stddev_weight = crud.calculate_stddev_weight()
+        stddev_height = crud.calculate_stddev_height()
 
-        return render_template('report.html', report=parent_list)
+        # Create report data
+        report_data = {
+            'total_probands': total_probands,
+            'total_active_probands': total_active_probands,
+            'total_inactive_probands': total_inactive_probands,
+            'stddev_weight': stddev_weight,
+            'stddev_height': stddev_height
+        }
+
+        print(report_data)
+
+        return render_template('report.html', report=report_data)
+
     else:
         return render_template('report.html')
 
