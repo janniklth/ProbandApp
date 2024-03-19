@@ -2,8 +2,6 @@ from app.db.base_class import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, UUID, String, Column, ForeignKey, Date, Float, Boolean
 
-from app.db.session import get_db
-
 # with get_db() as db:
     # db.query(Proband).all()
 
