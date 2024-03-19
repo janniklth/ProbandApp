@@ -7,8 +7,8 @@ class Proband(Base):
     __tablename__ = "PROBAND"
 
     id = mapped_column(UUID, primary_key=True, autoincrement=True)
-    firstname = mapped_column(String, nullable=False)
-    lastname = mapped_column(String, nullable=False)
+    firstName = mapped_column(String, nullable=False)
+    lastName = mapped_column(String, nullable=False)
     email = mapped_column(String, nullable=False)
     gender = mapped_column(UUID, ForeignKey("GENDER.id", ondelete="SET NULL"), nullable=False)
     birthday = mapped_column(Date, nullable=False)
