@@ -14,14 +14,13 @@ import openai
 from flask import Flask
 import json
 
-from schemas.proband import ProbandCreate
-from models.proband import Proband
 from app.db import crud
+from app.db.session import get_db
 
-
-
+# create a new Flask app
 app = Flask(__name__)
 
+# load openai config
 with open('app/config.json') as f:
     config = json.load(f)
     openai_api_key = config['openai']['api_key']
@@ -29,15 +28,15 @@ with open('app/config.json') as f:
 app.config['SECRET_KEY'] = os.urandom(24)
 app.secret_key = "super secret key"
 
-DB_CONFIG = {
-    "MYSQL_HOST": "127.0.0.1",
-    "MYSQL_USER": "root",
-    "MYSQL_PASSWORD": "change-me",
-    "MYSQL_DB": "dbproject",
-    "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1:3306/dbproject",
-}
+# DB_CONFIG = {
+#     "MYSQL_HOST": "127.0.0.1",
+#     "MYSQL_USER": "root",
+#     "MYSQL_PASSWORD": "change-me",
+#     "MYSQL_DB": "dbproject",
+#     "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1:3306/dbproject",
+# }
 
-app.config.update(DB_CONFIG)
+# app.config.update(DB_CONFIG)
 
 mysql = MySQL(app)
 
@@ -45,79 +44,79 @@ mysql = MySQL(app)
 db = SQLAlchemy(app)
 
 
-def get_probands(items, offset=0, per_page=12):
-    return items[offset: offset + per_page]
+# def get_probands(items, offset=0, per_page=12):
+#     return items[offset: offset + per_page]
 
 
-
-def create_proband(firstname: str, lastname: str, email: str, gender: str, birthday: datetime, height: float,
-                   weight: float, health: float, isactive: bool) -> Proband:
-    """
-    Create a Proband instance and add it to the database.
-
-    :param health:
-    :param isactive:
-    :param weight:
-    :param height:
-    :param birthday:
-    :param gender:
-    :param email:
-    :param lastname:
-    :param firstname: probands firstname
-    :return: a Proband instance or None
-    """
-
-    proband = Proband(firstname=firstname, lastname=lastname, email=email, gender=gender, birthday=birthday,
-                      height=height, weight=weight, health=health, isactive=isactive)
-    db.session.add(proband)
-    db.session.commit()
-    return proband
-
-
-def handle_error(e: Exception):
-    print("Action failed!")
-    print(e)
+# def create_proband(firstname: str, lastname: str, email: str, gender: str, birthday: datetime, height: float,
+#                    weight: float, health: float, isactive: bool) -> Proband:
+#     """
+#     Create a Proband instance and add it to the database.
+#
+#     :param health:
+#     :param isactive:
+#     :param weight:
+#     :param height:
+#     :param birthday:
+#     :param gender:
+#     :param email:
+#     :param lastname:
+#     :param firstname: probands firstname
+#     :return: a Proband instance or None
+#     """
+#
+#     proband = Proband(firstname=firstname, lastname=lastname, email=email, gender=gender, birthday=birthday,
+#                       height=height, weight=weight, health=health, isactive=isactive)
+#     db.session.add(proband)
+#     db.session.commit()
+#     return proband
 
 
-def load_data_from_sql():
-    try:
-        with app.app_context():
-            # Überprüfen, ob bereits Daten in der Proband-Tabelle vorhanden sind
-            if not db.session.query(Proband.query.exists()).scalar():
-                with open("Daten.sql", 'r', encoding='utf-8') as data_file:
-                    lines = data_file.readlines()
+# def handle_error(e: Exception):
+#     print("Action failed!")
+#     print(e)
 
-                    current_table = ""
 
-                    for line in lines:
-                        line = line.strip()
-                        if line.startswith("-- "):
-                            current_table = line.replace("-- ", "").strip()
-
-                        if line and not line.startswith("--"):
-                            if current_table == "Probanden":
-                                data = line.split(',')
-                                country_id = randint(0, 26)
-                                proband_data = {
-                                    "firstname": data[0].strip(),
-                                    "lastname": data[1].strip(),
-                                    "email": data[2].strip(),
-                                    "gender": data[3].strip(),
-                                    "birthday": data[4].strip(),  # assuming birthday format is correct
-                                    "weight": float(data[5].strip()),
-                                    "height": float(data[6].strip()),
-                                    "health": float(data[7].strip()),
-                                    "isactive": bool(data[8].strip())
-                                }
-                                try:
-                                    proband = ProbandCreate(**proband_data)
-                                    create_proband(proband)
-                                except ValidationError as e:
-                                    print(f"Validation failed for data: {proband_data}")
-                                    print(e)
-    except Exception as e:
-        print(f"Error loading data from Daten.sql: {e}")
-
+#
+# def load_data_from_sql():
+#     try:
+#         with app.app_context():
+#             # Überprüfen, ob bereits Daten in der Proband-Tabelle vorhanden sind
+#             if not db.session.query(Proband.query.exists()).scalar():
+#                 with open("Daten.sql", 'r', encoding='utf-8') as data_file:
+#                     lines = data_file.readlines()
+#
+#                     current_table = ""
+#
+#                     for line in lines:
+#                         line = line.strip()
+#                         if line.startswith("-- "):
+#                             current_table = line.replace("-- ", "").strip()
+#
+#                         if line and not line.startswith("--"):
+#                             if current_table == "Probanden":
+#                                 data = line.split(',')
+#                                 country_id = randint(0, 26)
+#                                 proband_data = {
+#                                     "firstname": data[0].strip(),
+#                                     "lastname": data[1].strip(),
+#                                     "email": data[2].strip(),
+#                                     "gender": data[3].strip(),
+#                                     "birthday": data[4].strip(),  # assuming birthday format is correct
+#                                     "weight": float(data[5].strip()),
+#                                     "height": float(data[6].strip()),
+#                                     "health": float(data[7].strip()),
+#                                     "isactive": bool(data[8].strip())
+#                                 }
+#                                 try:
+#                                     proband = ProbandCreate(**proband_data)
+#                                     create_proband(proband)
+#                                 except ValidationError as e:
+#                                     print(f"Validation failed for data: {proband_data}")
+#                                     print(e)
+#     except Exception as e:
+#         print(f"Error loading data from Daten.sql: {e}")
+#
 
 #
 # with app.app_context():
@@ -172,23 +171,49 @@ def load_data_from_sql():
 #                 print(f" {this_no_worky}")
 
 
+# @app.route('/probands', methods=['POST', 'GET'])
+# def probands():
+#     if request.method == 'GET':
+#         # total = 20
+#         page, per_page, offset = get_page_args(page_parameter="page",
+#                                                per_page_parameter="per_page")
+#         genders = Gender.query.all()
+#         probands = Proband.query.filter(Proband.isActive.is_(True)).all()
+#         total = len(probands)
+#         pagination_probands = get_probands(probands, offset=offset, per_page=per_page)
+#         pagination = Pagination(page=page, per_page=per_page, total=total,
+#                                 css_framework='bootstrap4')
+#         return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
+#                                per_page=per_page,
+#                                pagination=pagination)
+#     else:
+#         return render_template('probands.html')
+
+# @app.route('/probands', methods=['POST', 'GET'])
+# def probands():
+#     if request.method == 'GET':
+#         page, per_page, offset = get_page_args(page_parameter="page",
+#                                                per_page_parameter="per_page")
+#         genders = Gender.query.all()
+#         probands = crud.get_active_probands()
+#         total = len(probands)
+#         pagination_probands = crud.get_probands_with_pagination(probands, offset=offset, per_page=per_page)
+#         pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4')
+#         return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
+#                                per_page=per_page, pagination=pagination)
+#     else:
+#         return render_template('probands.html')
+
 @app.route('/probands', methods=['POST', 'GET'])
 def probands():
     if request.method == 'GET':
-        # total = 20
         page, per_page, offset = get_page_args(page_parameter="page",
                                                per_page_parameter="per_page")
+
+        # get all genders
         genders = Gender.query.all()
-        probands = Proband.query.filter(Proband.isActive.is_(True)).all()
-        total = len(probands)
-        pagination_probands = get_probands(probands, offset=offset, per_page=per_page)
-        pagination = Pagination(page=page, per_page=per_page, total=total,
-                                css_framework='bootstrap4')
-        return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
-                               per_page=per_page,
-                               pagination=pagination)
-    else:
-        return render_template('probands.html')
+
+
 
 
 def determine_search_string():
@@ -314,6 +339,7 @@ def create_messages(question, context):
         }
     ]
 
+
 # route for openai chatbot
 @app.route("/generate", methods=["POST", "GET"])
 def generate():
@@ -388,10 +414,9 @@ def report():
         return render_template('report.html')
 
 
-
 if __name__ == "__main__":
-    # load data from sql
-    load_data_from_sql()
+    # load initial data if database is empty
+    crud.load_initial_data()
 
     # run the app
     app.run(debug=True, port=8080)

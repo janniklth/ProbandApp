@@ -2,7 +2,8 @@ from app.db.session import get_db
 from models.proband import Proband
 from models.gender import Gender
 
-def get_all_probands():
+
+def get_all_active_probands():
     with get_db() as db:
         return db.query(Proband).all()
 
@@ -28,3 +29,17 @@ def load_initial_data():
 def handle_error(e):
     print("Action failed!")
     print(e)
+
+
+# TODO: Seperate following methods in utils file
+
+def get_probands_with_pagination(probands, offset=0, per_page=12):
+    """
+    Paginate a list of probands.
+
+    :param probands: List of probands to paginate.
+    :param offset: Offset for pagination.
+    :param per_page: Number of probands per page.
+    :return: Paginated list of probands.
+    """
+    return probands[offset: offset + per_page]
