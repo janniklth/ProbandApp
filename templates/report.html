@@ -5,14 +5,12 @@
 
       {% if report %}
            <table >
-           {% for dictionary in report %}
-               {% for key in dictionary %}
-               <tr>
-               <td>{{  key }}</td>
-        <td>{{  dictionary[key] }}</td>
-                    </tr>
-           {% endfor %}
-     {% endfor %}
+               {% for key, value in report.items() %}
+                   <tr>
+                       <td>{{ key }}</td>
+                       <td>{{ value }}</td>
+                   </tr>
+               {% endfor %}
       {% endif %}
  </table>
       </div>
