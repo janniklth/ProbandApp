@@ -45,26 +45,26 @@ CREATE TABLE IF NOT EXISTS GENDER(
     name varchar(50)
 );
 
-#
-# ALTER TABLE PROBANDMEDICATION
-#     -- ADD CONSTRAINT `patientmedication_proband_id_fk`
-#         ADD FOREIGN KEY (`probandid`) REFERENCES Proband(`id`);
-#
-# ALTER TABLE
-#     PROBANDSICKNESS
-#     -- ADD CONSTRAINT `patientsickness_patientid_fk`
-#         ADD FOREIGN KEY (`probandid`) REFERENCES PRO(`id`);
-# ALTER TABLE
-#     ProbandMedication
-#     -- ADD CONSTRAINT `patientmedication_medicationid_fk`
-#         ADD FOREIGN KEY(`medicationid`) REFERENCES `Medication`(`id`);
-# ALTER TABLE
-#     Proband
-#     -- ADD CONSTRAINT `patient_countryid_fk`
-#         ADD FOREIGN KEY (`countryid`) REFERENCES `Country`(`id`);
-# ALTER TABLE
-#     ProbandSickness
-#     -- ADD CONSTRAINT `patientsickness_sicknessid_fk_2`
-#         ADD FOREIGN KEY (`sicknessid`) REFERENCES `Sickness`(`id`);
 
-# SET GLOBAL FOREIGN_KEY_CHECKS=0;
+ALTER TABLE PROBANDMEDICATION
+    -- ADD CONSTRAINT `patientmedication_proband_id_fk`
+        ADD FOREIGN KEY (`probandId`) REFERENCES PROBAND(`id`);
+
+ALTER TABLE
+    PROBANDSICKNESS
+    -- ADD CONSTRAINT `patientsickness_patientid_fk`
+        ADD FOREIGN KEY (`probandId`) REFERENCES PROBAND(`id`);
+ALTER TABLE
+    PROBANDMEDICATION
+    -- ADD CONSTRAINT `patientmedication_medicationid_fk`
+        ADD FOREIGN KEY(`medicationId`) REFERENCES `MEDICATION`(`id`);
+ALTER TABLE
+    PROBAND
+    -- ADD CONSTRAINT `patient_countryid_fk`
+        ADD FOREIGN KEY (`countryId`) REFERENCES `COUNTRY`(`id`);
+ALTER TABLE
+    PROBANDSICKNESS
+    -- ADD CONSTRAINT `patientsickness_sicknessid_fk_2`
+        ADD FOREIGN KEY (`sicknessId`) REFERENCES `SICKNESS`(`id`);
+
+SET GLOBAL FOREIGN_KEY_CHECKS=0;
