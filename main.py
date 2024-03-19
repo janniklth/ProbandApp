@@ -6,12 +6,15 @@ from flask import render_template, request, session, redirect, url_for
 from flask_mysqldb import MySQL
 from flask_paginate import Pagination, get_page_args
 from flask_sqlalchemy import SQLAlchemy
+from pydantic import ValidationError
 from sqlalchemy import func, text
 import datetime
 import os
 import openai
 from flask import Flask
 import json
+
+from schemas.proband import ProbandCreate
 
 app = Flask(__name__)
 
@@ -102,57 +105,96 @@ def handle_error(e: Exception):
     print("Action failed!")
     print(e)
 
-
-with app.app_context():
-    with db.engine.connect() as conn:
-        with open("initial.sql", 'r') as file:
-            content = file.read()
-            transaction = conn.begin()
-            try:
-                for command in content.split(";"):
-                    if command.strip() != "":
-                        conn.execute(text(command))
-                transaction.commit()
-            except Exception as alleskaputt:
-                print(f"Command skipped: {command}")
-                print(alleskaputt)
-                transaction.rollback()
-
-        transaction = conn.begin()
-        probands = conn.execute(text('SELECT * FROM Proband;')).fetchall()
-        if len(probands) == 0:
-            print("No entries, first setup, seeding the database with data :))")
-            try:
-                with open("Daten.sql", 'r', encoding='utf-8') as dada:
-                    lines = dada.readlines()
+def load_data_from_sql():
+    try:
+        with app.app_context():
+            # Überprüfen, ob bereits Daten in der Proband-Tabelle vorhanden sind
+            if not db.session.query(Proband.query.exists()).scalar():
+                with open("Daten.sql", 'r', encoding='utf-8') as data_file:
+                    lines = data_file.readlines()
 
                     current_table = ""
 
                     for line in lines:
-                        line = line.replace("\n", "")
+                        line = line.strip()
                         if line.startswith("-- "):
-                            current_table = line.replace("-- ", "")
-                            current_table = current_table.replace(" ", "")
+                            current_table = line.replace("-- ", "").strip()
 
-                        if line != "" and line != f"-- {current_table}":
-                            if current_table == "Medikament":
-                                conn.execute(text(f"INSERT INTO Medication (name) VALUES ({line});"))
-                            if current_table == "Krankheit":
-                                conn.execute(text(f"INSERT INTO Sickness (name) VALUES ({line});"))
-                            if current_table == "Geschlecht":
-                                conn.execute(text(f"INSERT INTO Gender (name) VALUES ({line});"))
-                            if current_table == "Länder":
-                                conn.execute(text(f"INSERT INTO Country (countrycode, name) VALUES ({line});"))
+                        if line and not line.startswith("--"):
                             if current_table == "Probanden":
+                                data = line.split(',')
                                 country_id = randint(0, 26)
-                                conn.execute(text(
-                                    f"INSERT INTO Proband (firstname, lastname, email, gender, birthday, weight, height, countryid) VALUES ({line}, {country_id});"))
+                                proband_data = {
+                                    "firstname": data[0].strip(),
+                                    "lastname": data[1].strip(),
+                                    "email": data[2].strip(),
+                                    "gender": data[3].strip(),
+                                    "birthday": data[4].strip(),  # assuming birthday format is correct
+                                    "weight": float(data[5].strip()),
+                                    "height": float(data[6].strip()),
+                                    "health": float(data[7].strip()),
+                                    "isactive": bool(data[8].strip())
+                                }
+                                try:
+                                    proband = ProbandCreate(**proband_data)
+                                    create_proband(proband)
+                                except ValidationError as e:
+                                    print(f"Validation failed for data: {proband_data}")
+                                    print(e)
+    except Exception as e:
+        print(f"Error loading data from Daten.sql: {e}")
 
-                conn.execute(text("SET GLOBAL FOREIGN_KEY_CHECKS=1;"))
-                transaction.commit()
-                print("we seeded the db succesfully")
-            except Exception as this_no_worky:
-                print(f" {this_no_worky}")
+#
+# with app.app_context():
+#     with db.engine.connect() as conn:
+#         with open("initial.sql", 'r') as file:
+#             content = file.read()
+#             transaction = conn.begin()
+#             try:
+#                 for command in content.split(";"):
+#                     if command.strip() != "":
+#                         conn.execute(text(command))
+#                 transaction.commit()
+#             except Exception as alleskaputt:
+#                 print(f"Command skipped: {command}")
+#                 print(alleskaputt)
+#                 transaction.rollback()
+#
+#         transaction = conn.begin()
+#         probands = conn.execute(text('SELECT * FROM Proband;')).fetchall()
+#         if len(probands) == 0:
+#             print("No entries, first setup, seeding the database with data :))")
+#             try:
+#                 with open("Daten.sql", 'r', encoding='utf-8') as dada:
+#                     lines = dada.readlines()
+#
+#                     current_table = ""
+#
+#                     for line in lines:
+#                         line = line.replace("\n", "")
+#                         if line.startswith("-- "):
+#                             current_table = line.replace("-- ", "")
+#                             current_table = current_table.replace(" ", "")
+#
+#                         if line != "" and line != f"-- {current_table}":
+#                             if current_table == "Medikament":
+#                                 conn.execute(text(f"INSERT INTO Medication (name) VALUES ({line});"))
+#                             if current_table == "Krankheit":
+#                                 conn.execute(text(f"INSERT INTO Sickness (name) VALUES ({line});"))
+#                             if current_table == "Geschlecht":
+#                                 conn.execute(text(f"INSERT INTO Gender (name) VALUES ({line});"))
+#                             if current_table == "Länder":
+#                                 conn.execute(text(f"INSERT INTO Country (countrycode, name) VALUES ({line});"))
+#                             if current_table == "Probanden":
+#                                 country_id = randint(0, 26)
+#                                 conn.execute(text(
+#                                     f"INSERT INTO Proband (firstname, lastname, email, gender, birthday, weight, height, countryid) VALUES ({line}, {country_id});"))
+#
+#                 conn.execute(text("SET GLOBAL FOREIGN_KEY_CHECKS=1;"))
+#                 transaction.commit()
+#                 print("we seeded the db succesfully")
+#             except Exception as this_no_worky:
+#                 print(f" {this_no_worky}")
 
 
 @app.route('/probands', methods=['POST', 'GET'])
@@ -363,4 +405,10 @@ def report():
 
 
 if __name__ == "__main__":
+    # load data from sql
+    load_data_from_sql()
+
+    # run the app
     app.run(debug=True, port=8080)
+
+
