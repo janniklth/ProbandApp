@@ -105,6 +105,7 @@ def handle_error(e: Exception):
     print("Action failed!")
     print(e)
 
+
 def load_data_from_sql():
     try:
         with app.app_context():
@@ -143,6 +144,7 @@ def load_data_from_sql():
                                     print(e)
     except Exception as e:
         print(f"Error loading data from Daten.sql: {e}")
+
 
 #
 # with app.app_context():
@@ -225,6 +227,7 @@ def determine_search_string():
     return search_str if search_str else ""
 
 
+# route to search for existing probands
 @app.route('/search', methods=['POST', 'GET'])
 def search():
     page, per_page, offset = get_page_args(page_parameter="page", per_page_parameter="per_page")
@@ -243,7 +246,7 @@ def search():
     search_str = determine_search_string()
 
     formatted_search = "%{}%".format(search_str)
-    # TODO: nur aktive
+    # TODO: only search for active probands
     probands = Proband.query.filter(Proband.lastname.like(formatted_search)).all()
 
     genders = Gender.query.all()
@@ -257,6 +260,7 @@ def search():
                            pagination=pagination, search=search_str)
 
 
+# route to delete existing proband
 @app.route("/delete", methods=["POST"])
 def delete():
     try:
@@ -269,8 +273,11 @@ def delete():
         handle_error(e)
 
 
+# route to update existing proband
 @app.route("/update", methods=["POST"])
 def update():
+    # TODO: add validation??
+    # TODO: clean up code
     try:
         oldemail = request.form.get("oldemail")
         newlastname = request.form.get("newlastname")
@@ -281,6 +288,7 @@ def update():
         newheight = request.form.get("newheight")
         newhealth = request.form.get("newhealth")
         medi = request.form.get("genselect")
+        # TODO: add divers gender and more
         if medi == 'M':
             medi = 1
         else:
@@ -301,10 +309,12 @@ def update():
         handle_error(e)
 
 
+# route to add new proband
 @app.route('/add', methods=['POST', 'GET'])
 def add():
     if request.method == 'POST':
         try:
+            # TODO: add divers gender and more
             medi = request.form.get("genselect")
             if medi == 'M':
                 medi = 1
@@ -331,7 +341,7 @@ def create_messages(question, context):
         }
     ]
 
-
+# route for openai chatbot
 @app.route("/generate", methods=["POST", "GET"])
 def generate():
     question = request.args.get("question", "")
@@ -363,6 +373,7 @@ def generate():
     return render_template('generate.html')
 
 
+# route for home
 @app.route('/')
 def index():  # put application's code here
     return render_template('home.html')
@@ -404,11 +415,10 @@ def report():
         return render_template('report.html')
 
 
+
 if __name__ == "__main__":
     # load data from sql
     load_data_from_sql()
 
     # run the app
     app.run(debug=True, port=8080)
-
-
