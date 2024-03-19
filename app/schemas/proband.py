@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
-from typing import Optional
+from uuid import UUID
+
 
 class ProbandBase(BaseModel):
     firstname: str
@@ -12,13 +13,16 @@ class ProbandBase(BaseModel):
     height: float
     health: float
     country_id: int
-    isactive: bool
+    isActive: bool
+    lastChanged: date
+
 
 class ProbandCreate(ProbandBase):
     pass
 
+
 class Proband(ProbandBase):
-    id: int
+    id: UUID
 
     class Config:
         orm_mode = True
