@@ -1,12 +1,12 @@
+USE dbproject;
+
 CREATE SCHEMA IF NOT EXISTS dbproject;
 
-CREATE DATABASE IF NOT EXISTS dbproject;
-
-CREATE TABLE IF NOT EXISTS Medication (
+CREATE TABLE IF NOT EXISTS MEDICATION (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
-CREATE TABLE IF NOT EXISTS Proband (
+CREATE TABLE IF NOT EXISTS PROBAND (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
@@ -16,54 +16,55 @@ CREATE TABLE IF NOT EXISTS Proband (
     weight DOUBLE(8, 2) NOT NULL,
     height DOUBLE(8, 2) NOT NULL,
     health FLOAT,
-    countryid BIGINT NOT NULL,
-    isactive BOOLEAN DEFAULT true
+    countryId BIGINT NOT NULL,
+    isActive BOOLEAN DEFAULT true,
+    lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-CREATE TABLE IF NOT EXISTS ProbandMedication (
+CREATE TABLE IF NOT EXISTS PROBANDMEDICATION (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    probandid BIGINT NOT NULL,
-    medicationid BIGINT NOT NULL
+    probandId BIGINT NOT NULL,
+    medicationId BIGINT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS Sickness (
+CREATE TABLE IF NOT EXISTS SICKNESS (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
-CREATE TABLE IF NOT EXISTS Country(
+CREATE TABLE IF NOT EXISTS COUNTRY (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     countrycode varchar(3) NOT NULL,
     name VARCHAR(255) NOT NULL
 );
-CREATE TABLE IF NOT EXISTS ProbandSickness(
+CREATE TABLE IF NOT EXISTS PROBANDSICKNESS(
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    probandid BIGINT NOT NULL,
-    sicknessid BIGINT NOT NULL
+    probandId BIGINT NOT NULL,
+    sicknessId BIGINT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Gender(
+CREATE TABLE IF NOT EXISTS GENDER(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name varchar(50)
 );
 
+#
+# ALTER TABLE PROBANDMEDICATION
+#     -- ADD CONSTRAINT `patientmedication_proband_id_fk`
+#         ADD FOREIGN KEY (`probandid`) REFERENCES Proband(`id`);
+#
+# ALTER TABLE
+#     PROBANDSICKNESS
+#     -- ADD CONSTRAINT `patientsickness_patientid_fk`
+#         ADD FOREIGN KEY (`probandid`) REFERENCES PRO(`id`);
+# ALTER TABLE
+#     ProbandMedication
+#     -- ADD CONSTRAINT `patientmedication_medicationid_fk`
+#         ADD FOREIGN KEY(`medicationid`) REFERENCES `Medication`(`id`);
+# ALTER TABLE
+#     Proband
+#     -- ADD CONSTRAINT `patient_countryid_fk`
+#         ADD FOREIGN KEY (`countryid`) REFERENCES `Country`(`id`);
+# ALTER TABLE
+#     ProbandSickness
+#     -- ADD CONSTRAINT `patientsickness_sicknessid_fk_2`
+#         ADD FOREIGN KEY (`sicknessid`) REFERENCES `Sickness`(`id`);
 
-ALTER TABLE ProbandMedication
-    -- ADD CONSTRAINT `patientmedication_proband_id_fk`
-        ADD FOREIGN KEY (`probandid`) REFERENCES Proband(`id`);
-
-ALTER TABLE
-    ProbandSickness
-    -- ADD CONSTRAINT `patientsickness_patientid_fk`
-        ADD FOREIGN KEY (`probandid`) REFERENCES Proband(`id`);
-ALTER TABLE
-    ProbandMedication
-    -- ADD CONSTRAINT `patientmedication_medicationid_fk`
-        ADD FOREIGN KEY(`medicationid`) REFERENCES `Medication`(`id`);
-ALTER TABLE
-    Proband
-    -- ADD CONSTRAINT `patient_countryid_fk`
-        ADD FOREIGN KEY (`countryid`) REFERENCES `Country`(`id`);
-ALTER TABLE
-    ProbandSickness
-    -- ADD CONSTRAINT `patientsickness_sicknessid_fk_2`
-        ADD FOREIGN KEY (`sicknessid`) REFERENCES `Sickness`(`id`);
-
-SET GLOBAL FOREIGN_KEY_CHECKS=0;
+# SET GLOBAL FOREIGN_KEY_CHECKS=0;

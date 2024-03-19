@@ -7,6 +7,9 @@ def get_all_active_probands():
     with get_db() as db:
         return db.query(Proband).all()
 
+def get_all_genders():
+    with get_db() as db:
+        return db.query(Gender).all()
 
 def get_proband_by_id(proband_id):
     with get_db() as db:
@@ -21,7 +24,7 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _height, _
         db.commit()
         return proband
 
-
+# TODO: Annika, please implement the following method
 def load_initial_data():
     pass
 

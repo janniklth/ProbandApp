@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 
 
@@ -14,7 +14,7 @@ class ProbandBase(BaseModel):
     health: float
     country_id: int
     isActive: bool
-    lastChanged: date
+    lastChanged: datetime
 
 
 class ProbandCreate(ProbandBase):

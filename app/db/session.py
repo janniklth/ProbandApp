@@ -7,8 +7,8 @@ from contextlib import contextmanager
 # MySQL Settings
 MYSQL_HOST = "127.0.0.1"
 MYSQL_USER = "root"
-MYSQL_PASSWORD = "dhbw-mysql"
-MYSQL_DB = "2024_inf_db"
+MYSQL_PASSWORD = "change-me"
+MYSQL_DB = "dbproject"
 MYSQL_PORT = "3306"
 SQLALCHEMY_DATABASE_URI = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
 

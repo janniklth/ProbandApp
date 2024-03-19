@@ -16,6 +16,9 @@ import json
 
 from app.db import crud
 from app.db.session import get_db
+from app.schemas.gender import Gender
+
+
 
 # create a new Flask app
 app = Flask(__name__)
@@ -28,15 +31,15 @@ with open('app/config.json') as f:
 app.config['SECRET_KEY'] = os.urandom(24)
 app.secret_key = "super secret key"
 
-# DB_CONFIG = {
-#     "MYSQL_HOST": "127.0.0.1",
-#     "MYSQL_USER": "root",
-#     "MYSQL_PASSWORD": "change-me",
-#     "MYSQL_DB": "dbproject",
-#     "SQLALCHEMY_DATABASE_URI": "mysql://root:change-me@127.0.0.1:3306/dbproject",
-# }
+DB_CONFIG = {
+    "MYSQL_HOST": "127.0.0.1",
+    "MYSQL_USER": "root",
+    "MYSQL_PASSWORD": "change-me",
+    "MYSQL_DB": "dbproject",
+    "SQLALCHEMY_DATABASE_URI": "mysql://root:@127.0.0.1:3306/dbproject",
+}
 
-# app.config.update(DB_CONFIG)
+app.config.update(DB_CONFIG)
 
 mysql = MySQL(app)
 
@@ -211,7 +214,20 @@ def probands():
                                                per_page_parameter="per_page")
 
         # get all genders
-        genders = Gender.query.all()
+        genders = crud.get_all_genders()
+
+        # get all active probands and count them
+        probands = crud.get_all_active_probands()
+        total = len(probands)
+
+        # get paginated probands
+        pagination_probands = crud.get_probands_with_pagination(probands, offset=offset, per_page=per_page)
+        pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4')
+        return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
+                               per_page=per_page, pagination=pagination)
+
+    else:
+        return render_template('probands.html')
 
 
 
@@ -341,35 +357,35 @@ def create_messages(question, context):
 
 
 # route for openai chatbot
-@app.route("/generate", methods=["POST", "GET"])
-def generate():
-    question = request.args.get("question", "")
-    question = str(question).strip()
-    context = request.args.get("context", "")
-    context = str(context).strip()
-    data = ''
-    if question:
-        def stream():
-            openai.api_key = openai_api_key
-            messages = create_messages(question, context)
-            response = openai.ChatCompletion.create(
-                model="gpt-4",
-                messages=messages,
-                temperature=0.7,  # Kreativität der Generierung; zufällig Generierung nächster Token
-                # Eingabe werden in Tokens unterteilt, die dann in Vektoren umgewandelt werden
-                # max_tokens=1000,
-                stream=True,
-                top_p=1,  # Alternative zu temperature
-            )
-            for trunk in response:
-                if trunk['choices'][0]['finish_reason'] is not None:
-                    data = '[DONE]'
-                else:
-                    data = trunk['choices'][0]['delta'].get('content', '')
-                yield "data: %s\n\n" % data.replace("\n", "<br>")
-
-        return flask.Response(stream(), mimetype="text/event-stream")
-    return render_template('generate.html')
+# @app.route("/generate", methods=["POST", "GET"])
+# def generate():
+#     question = request.args.get("question", "")
+#     question = str(question).strip()
+#     context = request.args.get("context", "")
+#     context = str(context).strip()
+#     data = ''
+#     if question:
+#         def stream():
+#             openai.api_key = openai_api_key
+#             messages = create_messages(question, context)
+#             response = openai.ChatCompletion.create(
+#                 model="gpt-4",
+#                 messages=messages,
+#                 temperature=0.7,  # Kreativität der Generierung; zufällig Generierung nächster Token
+#                 # Eingabe werden in Tokens unterteilt, die dann in Vektoren umgewandelt werden
+#                 # max_tokens=1000,
+#                 stream=True,
+#                 top_p=1,  # Alternative zu temperature
+#             )
+#             for trunk in response:
+#                 if trunk['choices'][0]['finish_reason'] is not None:
+#                     data = '[DONE]'
+#                 else:
+#                     data = trunk['choices'][0]['delta'].get('content', '')
+#                 yield "data: %s\n\n" % data.replace("\n", "<br>")
+#
+#         return flask.Response(stream(), mimetype="text/event-stream")
+#     return render_template('generate.html')
 
 
 # route for home
