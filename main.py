@@ -48,37 +48,6 @@ def get_probands(items, offset=0, per_page=12):
     return items[offset: offset + per_page]
 
 
-# class Proband(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     firstname = db.Column(db.String(50), unique=False, nullable=False)
-#     lastname = db.Column(db.String(50), unique=False, nullable=False)
-#     email = db.Column(db.String(10), unique=True, nullable=False)
-#     gender = db.Column(db.String(1), unique=False, nullable=False)
-#     birthday = db.Column(db.DateTime, unique=False, nullable=False)
-#     height = db.Column(db.Float, unique=False, nullable=False)
-#     weight = db.Column(db.Float, unique=False, nullable=False)
-#     health = db.Column(db.Float, unique=False, nullable=False)
-#     isActive = db.Column(db.Boolean, unique=False, nullable=False)
-#
-#     def __init__(self, firstname, lastname, email, gender, birthday, height, weight, health, isactive):
-#         self.firstname = firstname
-#         self.lastname = lastname
-#         self.email = email
-#         self.gender = gender
-#         self.birthday = birthday
-#         self.height = height
-#         self.weight = weight
-#         self.health = health
-#         self.isActive = isactive
-
-
-# class Gender(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(50), unique=True)
-#
-#     def __init__(self, name):
-#         self.name = name
-
 
 def create_proband(firstname: str, lastname: str, email: str, gender: str, birthday: datetime, height: float,
                    weight: float, health: float, isactive: bool) -> Proband:
