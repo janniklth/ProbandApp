@@ -1,22 +1,24 @@
-from app import db
+from app.db.session import get_db
 from models.proband import Proband
 from models.gender import Gender
 
-
 def get_all_probands():
-    return db.session.query(Proband).all()
+    with get_db() as db:
+        return db.query(Proband).all()
 
 
 def get_proband_by_id(proband_id):
-    return db.session.query(Proband).filter(Proband.id == proband_id).first()
+    with get_db() as db:
+        return db.query(Proband).filter(Proband.id == proband_id).first()
 
 
 def create_proband(_firstName, _lastName, _email, _gender, _birthday, _height, _weight, _health, _isActive):
-    proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, gender=_gender, birthday=_birthday,
-                      height=_height, weight=_weight, health=_health, isActive=_isActive)
-    db.session.add(proband)
-    db.session.commit()
-    return proband
+    with get_db() as db:
+        proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, gender=_gender, birthday=_birthday,
+                          height=_height, weight=_weight, health=_health, isActive=_isActive)
+        db.add(proband)
+        db.commit()
+        return proband
 
 
 def load_initial_data():
