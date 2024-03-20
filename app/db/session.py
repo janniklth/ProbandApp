@@ -1,8 +1,11 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from typing import Generator
 from contextlib import contextmanager
-
+from db.base_class import Base
+from models.proband import Proband
+from models.gender import Gender
+from models.country import Country
 
 # MySQL Settings
 MYSQL_HOST = "127.0.0.1"
@@ -19,6 +22,16 @@ engine = create_engine(
     pool_pre_ping=True, 
     # echo=True
     )
+print("creating tables")
+Base.metadata.create_all(engine)
+
+
+# Erstellen eines Inspectors
+inspector = inspect(engine)
+
+# Abrufen der Namen aller Tabellen
+available_tables = inspector.get_table_names()
+print(available_tables)
 
 # create a new session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
