@@ -418,8 +418,8 @@ def report():
         probands = crud.get_all_active_probands()
 
         # Filter active and inactive probands
-        active_probands = [proband for proband in probands if proband.is_active]
-        inactive_probands = [proband for proband in probands if not proband.is_active]
+        active_probands = [proband for proband in probands if proband.isActive]
+        inactive_probands = [proband for proband in probands if not proband.isActive]
 
         # Calculate total probands and counts
         total_probands = len(probands)
