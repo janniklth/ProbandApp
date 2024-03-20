@@ -329,17 +329,19 @@ def add():
             medi = request.form.get("genselect")
             if medi == 'M':
                 medi = 1
-            else:
+            else :
                 medi = 2
-            # crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
-            #                     request.form.get("email"), medi, request.form.get("birthday"),
-            #                     request.form.get("height"), request.form.get("weight"), request.form.get("health"),
-            #                     sqlalchemy.true())
 
-            crud.create_proband("fghj", "zuio",
-                                "ghjk", medi, "01.01.2000",
-                                "30", "20", "1",
+
+            crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
+                                request.form.get("email"), medi, request.form.get("birthday"),
+                                request.form.get("height"), request.form.get("weight"), request.form.get("health"),
                                 sqlalchemy.true())
+
+            # crud.create_proband("fghj", "zuio",
+            #                     "ghjk", medi, "01.01.2000",
+            #                     "30", "20", "1",
+            #                     sqlalchemy.true())
             return redirect(url_for('index'))
         except Exception as e:
             handle_error(e)
