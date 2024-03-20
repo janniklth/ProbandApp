@@ -77,8 +77,6 @@ def create_sickness(_name):
         return sickness
 
 
-# TODO: Annika, please implement the following method
-
 def load_initial_data():
     with get_db() as db:
         try:
@@ -132,60 +130,9 @@ def load_initial_data():
             print(f" {kabut}")
 
 
-pass
-
-
-# try:
-#     with get_db().engine.connect() as conn:
-#         # with open("initial.sql", 'r') as file:
-#         #     content = file.read()
-#         #     transaction = conn.begin()
-#         #     try:
-#         #         for command in content.split(";"):
-#         #             if command.strip() != "":
-#         #                 conn.execute(text(command))
-#         #         transaction.commit()
-#         #     except Exception as alleskaputt:
-#         #         print(f"Command skipped: {command}")
-#         #         print(alleskaputt)
-#         #         transaction.rollback()
-#
-#         transaction = conn.begin()
-#         probands = conn.execute(text('SELECT * FROM Proband;')).fetchall()
-#         if len(probands) == 0:
-#             print("No entries, first setup, seeding the database with data :))")
-#             try:
-#                 with open("Daten.sql", 'r', encoding='utf-8') as dada:
-#                     lines = dada.readlines()
-#
-#                     current_table = ""
-#
-#                     for line in lines:
-#                         line = line.replace("\n", "")
-#                         if line.startswith("-- "):
-#                             current_table = line.replace("-- ", "")
-#                             current_table = current_table.replace(" ", "")
-#
-#                         if line != "" and line != f"-- {current_table}":
-#                             if current_table == "Medikament":
-#                                 conn.execute(text(f"INSERT INTO Medication (name) VALUES ({line});"))
-#                             if current_table == "Krankheit":
-#                                 conn.execute(text(f"INSERT INTO Sickness (name) VALUES ({line});"))
-#                             if current_table == "Geschlecht":
-#                                 conn.execute(text(f"INSERT INTO Gender (name) VALUES ({line});"))
-#                             if current_table == "Länder":
-#                                 conn.execute(text(f"INSERT INTO Country (countrycode, name) VALUES ({line});"))
-#                             if current_table == "Probanden":
-#                                 country_id = randint(0, 26)
-#                                 conn.execute(text(
-#                                     f"INSERT INTO Proband (firstname, lastname, email, gender, birthday, weight, height, countryid) VALUES ({line}, {country_id});"))
-#
-#                 conn.execute(text("SET GLOBAL FOREIGN_KEY_CHECKS=1;"))
-#                 transaction.commit()
-#                 print("we seeded the db succesfully")
-#             except Exception as this_no_worky:
-#                 print(f" {this_no_worky}")
-#
+# TODO: implement duplicates function
+def find_duplicates():
+    pass
 
 
 def handle_error(e):
