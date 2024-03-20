@@ -4,6 +4,8 @@ from pydantic import ValidationError
 from sqlalchemy import func
 
 from app.db.session import get_db
+from models.country import Country
+from models.medication import Medication
 from models.proband import Proband
 from models.gender import Gender
 
@@ -36,6 +38,35 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _height, _
         db.add(proband)
         db.commit()
         return proband
+
+
+def create_country(_countrycode, _name):
+    with get_db() as db:
+        country = Country(countrycode=_countrycode, name=_name)
+        print("created new country : " + country.name)
+        db.add(country)
+        db.commit()
+        return country
+
+
+def create_gender(_name):
+    with get_db() as db:
+        gender = Gender(name=_name)
+        print("created new country : " + gender.name)
+        db.add(gender)
+        db.commit()
+        return gender
+
+
+def create_medication(_name):
+    with get_db() as db:
+        medication = Medication(name=_name)
+        print("created new country : " + medication.name)
+        db.add(medication)
+        db.commit()
+        return medication
+
+
 
 
 # TODO: Annika, please implement the following method
@@ -93,6 +124,7 @@ def load_initial_data():
     #             except Exception as this_no_worky:
     #                 print(f" {this_no_worky}")
     #
+
 
 def handle_error(e):
     print("Action failed!")
