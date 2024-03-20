@@ -29,8 +29,10 @@ def get_proband_by_id(proband_id):
 
 def create_proband(_firstName, _lastName, _email, _gender, _birthday, _height, _weight, _health, _isActive):
     with get_db() as db:
+        country_id = randint(0, 26)
         proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, gender=_gender, birthday=_birthday,
-                          height=_height, weight=_weight, health=_health, isActive=_isActive)
+                          height=_height, weight=_weight, health=_health, countryId=country_id, isActive=_isActive)
+        print("created new proband : " + proband.firstName)
         db.add(proband)
         db.commit()
         return proband
