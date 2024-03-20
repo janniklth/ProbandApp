@@ -1,110 +1,118 @@
 {% extends 'layout.html' %}
 {% block content %}
-<br>
-<div class="container" style="border: solid 2px #D1D1D1;">
     <br>
-    <form action="/search" method="POST">
-        <div class="mb-5 d-flex position-relative">
-            <!-- Search -->
-            <div class="input-group mx-auto">
-                <input class="form-control py-2 col-auto"
-                       placeholder="Suche nach..." name="search_probands" value="{{search}}"/>
-                <select class="custom-select col-2" name="search_field">
-                    <option value="firstname">Vorname</option>
-                    <option value="lastname">Nachname</option>
-                    <option value="email">E-Mail</option>
-                    <option value="gender">Geschlecht</option>
-                    <option value="birthday">Geburtstag</option>
-                    <option value="weight">Gewicht</option>
-                    <option value="height">Größe</option>
-                </select>
-                <button type="submit" class="btn btn-primary col-2">Search</button>
+    <div class="container" style="border: solid 2px #D1D1D1;">
+        <br>
+        <form action="/search" method="POST">
+            <div class="mb-5 d-flex position-relative">
+                <!-- Search -->
+                <div class="input-group mx-auto">
+                    <input class="form-control py-2 col-auto"
+                           placeholder="Suche nach..." name="search_probands" value="{{ search }}"/>
+                    <select class="custom-select col-2" name="search_field">
+                        <option value="firstname">Vorname</option>
+                        <option value="lastname">Nachname</option>
+                        <option value="email">E-Mail</option>
+                        <option value="gender">Geschlecht</option>
+                        <option value="birthday">Geburtstag</option>
+                        <option value="weight">Gewicht</option>
+                        <option value="height">Größe</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary col-2">Search</button>
+                </div>
             </div>
-        </div>
-    </form>
-    {% if probandsList %}
+        </form>
+        {% if probandsList %}
 
-    {{ pagination.links }}
+            {{ pagination.links }}
 
-    <h1 class="text-primary">&ensp;Probanden</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>Nr.</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for p in probandsList %}
-        <tr>
-            <td>{{ loop.index + (page - 1) * per_page }}</td>
-            <td>&ensp;
-                <form method="POST" action="./update" class="row" style="margin: 0;">
-                    <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="hidden" value="{{p.lastname}}" name="oldlastname" class="form-control"
-                               style="margin: 0; padding: 0;">
-                        <input type="text" value="{{p.lastname}}" name="newlastname" class="form-control"
-                               style="margin: 0; padding: 0;">
-                    </div>
-                    <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="hidden" value="{{p.firstname}}" name="oldfirstname" class="form-control"
-                               style="margin: 0; padding: 0;">
-                        <input type="text" value="{{p.firstname}}" name="newfirstname" class="form-control"
-                               style="margin: 0; padding: 0;">
-                    </div>
-                    <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="hidden" value="{{p.email}}" name="oldemail" class="form-control"
-                               style="margin: 0; padding: 0;">
-                        <input type="text" value="{{p.email}}" name="newemail" class="form-control"
-                               style="margin: 0; padding: 0;">
-                    </div>
-                    <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="date" value="{{p.birthday}}" name="newbirthday" class="form-control"
-                               style="margin: 0; padding: 6px 0;">
-                    </div>
-                    <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="number" value="{{p.height}}" name="newheight" min="50" max="250" step="0.1"
-                               class="form-control" style="margin: 0; padding: 0;">
-                    </div>
-                    <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="number" value="{{p.weight}}" name="newweight" min="20" max="250" step="0.1"
-                               class="form-control" style="margin: 0; padding: 0;">
-                    </div>
-                    <!--  <div class="col" style="margin: 0; padding: 0;">
+            <h1 class="text-primary">&ensp;Probanden</h1>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Nr.</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in probandsList %}
+                    <tr>
+                        <td>{{ loop.index + (page - 1) * per_page }}</td>
+                        <td>&ensp;
+                            <form method="POST" action="./update" class="row" style="margin: 0;">
+                                <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="hidden" value="{{ p.lastName }}" name="oldlastname"
+                                           class="form-control"
+                                           style="margin: 0; padding: 0;">
+                                    <input type="text" value="{{ p.lastName }}" name="newlastname" class="form-control"
+                                           style="margin: 0; padding: 0;">
+                                </div>
+                                <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="hidden" value="{{ p.firstName }}" name="oldfirstname"
+                                           class="form-control"
+                                           style="margin: 0; padding: 0;">
+                                    <input type="text" value="{{ p.firstName }}" name="newfirstname" class="form-control"
+                                           style="margin: 0; padding: 0;">
+                                </div>
+                                <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="hidden" value="{{ p.email }}" name="oldemail" class="form-control"
+                                           style="margin: 0; padding: 0;">
+                                    <input type="text" value="{{ p.email }}" name="newemail" class="form-control"
+                                           style="margin: 0; padding: 0;">
+                                </div>
+                                <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="date" value="{{ p.birthday }}" name="newbirthday" class="form-control"
+                                           style="margin: 0; padding: 6px 0;">
+                                </div>
+                                <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="number" value="{{ p.height }}" name="newheight" min="50" max="250"
+                                           step="0.1"
+                                           class="form-control" style="margin: 0; padding: 0;">
+                                </div>
+                                <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="number" value="{{ p.weight }}" name="newweight" min="20" max="250"
+                                           step="0.1"
+                                           class="form-control" style="margin: 0; padding: 0;">
+                                </div>
+                                <!--  <div class="col" style="margin: 0; padding: 0;">
                             <input type="number" value="{{p.bmi}}" name="bmi" min="1" max="1" readonly class="form-control" style="margin: 0; padding: 0;">
                         </div> -->
-                    <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="number" value="{{p.health}}" name="newhealth" min="1" max="6" step="0.1"
-                               class="form-control" style="margin: 0; padding: 0;">
-                    </div>
-                    <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <select name="genselect" class="custom-select" style="margin: 0; padding: 0;">
-                            {% for g in genders %}
-                            <option value="{{ g.name }}" {% if g.id==p.gender %} selected {% endif %}>{{ g.name }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-auto" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                        <input type="submit" value="Update" class="btn btn-primary">
-                    </div>
-                </form>
+                                <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="number" value="{{ p.health }}" name="newhealth" min="1" max="6"
+                                           step="0.1"
+                                           class="form-control" style="margin: 0; padding: 0;">
+                                </div>
+                                <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <select name="genselect" class="custom-select" style="margin: 0; padding: 0;">
+                                        {% for g in genders %}
+                                            <option value="{{ g.name }}" {% if g.id==p.gender %}
+                                                    selected {% endif %}>{{ g.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-auto" style="margin: 0; padding-left: 1px; padding-right: 1px;">
+                                    <input type="submit" value="Update" class="btn btn-primary">
+                                </div>
+                            </form>
 
 
-            </td>
-            <td>&ensp;
-                <form method="POST" action="./delete" style="display: inline">
-                    <input type="hidden" value="{{p.email}}" name="email">
-                    <input type="submit" value="Delete" class="btn btn-primary" style="background-color: orangered">
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                        </td>
+                        <td>&ensp;
+                            <form method="POST" action="./delete" style="display: inline">
+                                <input type="hidden" value="{{ p.email }}" name="email">
+                                <input type="submit" value="Delete" class="btn btn-primary"
+                                       style="background-color: orangered">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-    {{ pagination.links }}
+            {{ pagination.links }}
 
 
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 {% endblock %}
