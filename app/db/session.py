@@ -3,9 +3,11 @@ from sqlalchemy.orm import sessionmaker
 from typing import Generator
 from contextlib import contextmanager
 from db.base_class import Base
+
 from models.proband import Proband
 from models.gender import Gender
 from models.country import Country
+
 
 # MySQL Settings
 MYSQL_HOST = "127.0.0.1"

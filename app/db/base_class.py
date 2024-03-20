@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import as_declarative, declared_attr
 class Base:
     id: Any
     __name__: str
-    metadata = MetaData()
+
 
     # Generate __tablename__ automatically
     @declared_attr

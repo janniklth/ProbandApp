@@ -7,4 +7,4 @@ class Country(Base):
 
     id = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     name = mapped_column(String, nullable=False)
-    code = mapped_column(String, nullable=False)
+    countrycode = mapped_column(String, nullable=False)
