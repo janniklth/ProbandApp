@@ -33,7 +33,7 @@ def get_proband_by_id(proband_id):
 def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _height, _health="1.0", _isActive=1):
     with get_db() as db:
         country_id = randint(0, 26)
-        proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, gender=_gender, birthday=_birthday,
+        proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, genderId=_gender, birthday=_birthday,
                           weight=_weight, height=_height, health=_health, countryId=country_id, isActive=_isActive)
         print("created new proband : " + proband.firstName)
         db.add(proband)
@@ -110,11 +110,17 @@ def load_initial_data():
                                     create_country(line.split(", ")[0].strip("'"), line.split(", ")[1].strip("'"))
                                 elif current_table == "Probanden":
                                     line = line.split(", ")
+                                    if line[3].strip("'") == 'M':
+                                        gender = 1
+                                    elif line[3].strip("'") == 'F':
+                                        gender = 2
+                                    elif line[3].strip("'") == 'D':
+                                        gender = 3
+
                                     create_proband(line[0].strip("'"), line[1].strip("'"),
-                                                   line[2].strip("'"), 1,
+                                                   line[2].strip("'"), gender,
                                                    line[4].strip("'"), line[5].strip("'"),
                                                    line[6].strip("'"))
-
 
                         db.commit()
                     print("we seeded the db succesfully")

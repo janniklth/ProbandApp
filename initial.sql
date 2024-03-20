@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS PROBAND (
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    gender ENUM('M', 'F', 'D') NOT NULL,
+    genderId BIGINT NOT NULL,
     birthday DATE NOT NULL,
     weight DOUBLE(8, 2) NOT NULL,
     height DOUBLE(8, 2) NOT NULL,
@@ -62,6 +62,10 @@ ALTER TABLE
     PROBAND
     -- ADD CONSTRAINT `patient_countryid_fk`
         ADD FOREIGN KEY (`countryId`) REFERENCES `COUNTRY`(`id`);
+ALTER TABLE
+    PROBAND
+    -- ADD CONSTRAINT `patient_countryid_fk`
+        ADD FOREIGN KEY (`genderId`) REFERENCES `GENDER`(`id`);
 ALTER TABLE
     PROBANDSICKNESS
     -- ADD CONSTRAINT `patientsickness_sicknessid_fk_2`

@@ -10,7 +10,7 @@ class Proband(Base):
     firstName = mapped_column(String, nullable=False)
     lastName = mapped_column(String, nullable=False)
     email = mapped_column(String, nullable=False)
-    gender = mapped_column(BigInteger, ForeignKey("GENDER.id", ondelete="SET NULL"), nullable=False)
+    genderId = mapped_column(BigInteger, ForeignKey("GENDER.id", ondelete="SET NULL"), nullable=False)
     birthday = mapped_column(Date, nullable=False)
     weight = mapped_column(Float, nullable=False)
     height = mapped_column(Float, nullable=False)
