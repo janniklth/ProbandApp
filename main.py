@@ -17,8 +17,7 @@ import json
 from app.db import crud
 from app.db.session import get_db
 from app.schemas.gender import Gender
-
-
+from db.crud import handle_error
 
 # create a new Flask app
 app = Flask(__name__)
@@ -230,8 +229,6 @@ def probands():
         return render_template('probands.html')
 
 
-
-
 def determine_search_string():
     search_str = request.form.get('search_probands')
     if session['search'] is None or session['search'] == "":
@@ -334,13 +331,21 @@ def add():
                 medi = 1
             else:
                 medi = 2
-            create_proband(request.form.get("firstname"), request.form.get("lastname"),
-                           request.form.get("email"), medi, request.form.get("birthday"),
-                           request.form.get("height"), request.form.get("weight"), request.form.get("health"),
-                           sqlalchemy.true())
-            return redirect(url_for('probands'))
+            # crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
+            #                     request.form.get("email"), medi, request.form.get("birthday"),
+            #                     request.form.get("height"), request.form.get("weight"), request.form.get("health"),
+            #                     sqlalchemy.true())
+
+            crud.create_proband("fghj", "zuio",
+                                "ghjk", medi, "01.01.2000",
+                                "30", "20", "1",
+                                sqlalchemy.true())
+            return redirect(url_for('index'))
         except Exception as e:
             handle_error(e)
+            return render_template('/probands.html')
+    else:
+        return render_template('/probands.html')
 
 
 def create_messages(question, context):
