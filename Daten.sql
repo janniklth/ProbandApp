@@ -20,6 +20,7 @@
 -- Geschlecht
 'M'
 'F'
+'D'
 
 -- Länder
 'BE', 'Belgien'
@@ -51,7 +52,7 @@
 'PL', 'Polen'
 
 -- Probanden
-'Kessiah', 'Traice', 'ktraice0@ibm.com', 'F', '1985-01-19', 84.0, 171.0
+'Kessiah', 'Traice', 'ktraice0@ibm.com', 'D', '1985-01-19', 84.0, 171.0
 'Sebastien', 'Trayton', 'strayton1@sohu.com', 'M', '1996-05-16', 108.0, 161.6
 'Nikola', 'Leddy', 'nleddy2@miitbeian.gov.cn', 'M', '1987-05-30', 77.3, 162.2
 'Karin', 'Radbond', 'kradbond3@disqus.com', 'F', '2000-10-24', 65.3, 194.3
