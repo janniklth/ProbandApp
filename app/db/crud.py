@@ -9,6 +9,7 @@ from models.medication import Medication
 from models.proband import Proband
 from models.gender import Gender
 from models.sickness import Sickness
+from models.probandSickness import ProbandSickness
 
 from schemas.proband import Proband as ProbandSchema
 from schemas.gender import Gender as GenderSchema
@@ -32,12 +33,26 @@ def get_proband_by_id(proband_id):
 
 def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _height, _health="1.0", _isActive=1):
     with get_db() as db:
-        country_id = randint(0, 26)
+        # generate random country
+        _countryId = randint(0, 26)
+
+        # create new proband and add it to the db
         proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, genderId=_gender, birthday=_birthday,
-                          weight=_weight, height=_height, health=_health, countryId=country_id, isActive=_isActive)
+                          weight=_weight, height=_height, health=_health, countryId=_countryId, isActive=_isActive)
         print("created new proband : " + proband.firstName)
         db.add(proband)
         db.commit()
+
+        # generate between 1 and 5 random diseases
+        _diseases = []
+        for i in range(randint(1, 5)):
+            _diseases.append(randint(0, 4))
+
+        # add diseases to db
+        for disease in _diseases:
+            db.add(ProbandSickness(probandId=proband.id, sicknessId=disease))
+        db.commit()
+
         return proband
 
 
