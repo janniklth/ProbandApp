@@ -10,7 +10,7 @@ from models.proband import Proband
 from models.gender import Gender
 from models.diseases import Diseases
 from models.probandDiseases import ProbandDiseases
-from models.probandMediaction import ProbandMedication
+from models.probandMedication import ProbandMedication
 
 from schemas.proband import Proband as ProbandSchema
 from schemas.gender import Gender as GenderSchema
