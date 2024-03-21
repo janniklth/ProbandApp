@@ -1,4 +1,5 @@
 from random import randint, sample
+from typing import List
 
 from pydantic import ValidationError
 from sqlalchemy import func, inspect, true
@@ -62,8 +63,7 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
             print(f" {noDisease}")
 
         # assign medication to proband
-        medicationsForProband = diseases_to_medication(probandId=proband.id)
-
+        medicationsForProband = get_medications_for_proband(proband.id)
         for medication in medicationsForProband:
             db.add(ProbandMedication(probandId=proband.id, medicationId=medication))
             db.commit()
@@ -166,34 +166,40 @@ def load_initial_data():
             print(f" {kabut}")
 
 
-# TODO: implement duplicates function
-def diseases_to_medication(probandId):
+def get_diseases_for_proband(proband_id: int) -> List[int]:
+    """Retrieve diseases associated with a specific proband."""
     with get_db() as db:
-        allDiseases = db.query(ProbandDiseases).filter(ProbandDiseases.probandId == probandId)
-        diseaseIds = [disease.sicknessId for disease in allDiseases]
-        diseaseNames = [db.query(Diseases).get(disease_id).name for disease_id in diseaseIds]
-
-        # Definition der Zuordnung von Krankheiten zu Medikamenten
-        medication_mapping = {
-            (1, 2, 3, 4, 5): [6, 1],
-            # Rückenschmerzen, Bluthochdruck, Fehlsichtigkeit, Fettstoffwechselstörung, Grippe -> Supix, Wirknix
-            (1, 4, 5): [2],  # Rückenschmerzen, Fettstoffwechselstörung, Grippe -> Machmichfix
-            (2, 4): [4, 5],  # Bluthochdruck, Fettstoffwechselstörung -> Gesundix, Kannix
-            (3,): [7],  # Fehlsichtigkeit -> Istnix
-            (): [3]  # Sonst -> Tutnix
-        }
-
-        # Funktion zur Ermittlung der Medikamente basierend auf den Krankheiten
-        def get_medications_for_diseases(diseases):
-            for diseases_combination, medications in medication_mapping.items():
-                if set(diseases) == set(diseases_combination):
-                    return medications
-            return [3]  # Wenn keine passende Kombination gefunden wird, gib Tutnix zurück
-
-        medications = get_medications_for_diseases(diseaseIds)
-        return medications
+        all_diseases = db.query(ProbandDiseases).filter(ProbandDiseases.probandId == proband_id)
+        disease_ids = [disease.sicknessId for disease in all_diseases]
+    return disease_ids
 
 
+def get_medications_for_diseases(diseases: List[int]) -> List[int]:
+    """Determine medications based on diseases."""
+    # Mapping of diseases to medications
+    medication_mapping = {
+        (1, 2, 3, 4, 5): [6, 1],
+        # Rückenschmerzen, Bluthochdruck, Fehlsichtigkeit, Fettstoffwechselstörung, Grippe -> Supix, Wirknix
+        (1, 4, 5): [2],  # Rückenschmerzen, Fettstoffwechselstörung, Grippe -> Machmichfix
+        (2, 4): [4, 5],  # Bluthochdruck, Fettstoffwechselstörung -> Gesundix, Kannix
+        (3,): [7],  # Fehlsichtigkeit -> Istnix
+        (): [3]  # Sonst -> Tutnix
+    }
+
+    for diseases_combination, medications in medication_mapping.items():
+        if set(diseases) == set(diseases_combination):
+            return medications
+    return [3]  # If no combination is found, return "Tutnix"
+
+
+def get_medications_for_proband(proband_id: int) -> List[int]:
+    """Determine medications for a proband based on their diseases."""
+    diseases = get_diseases_for_proband(proband_id)
+    medications = get_medications_for_diseases(diseases)
+    return medications
+
+
+# TODO: implement duplicates function
 def find_duplicates():
     pass
 
