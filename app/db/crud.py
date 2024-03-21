@@ -44,7 +44,7 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
         db.commit()
 
         # generate between 1 and 5 unique random diseases
-        _diseases = [1, 2, 3, 4, 5]
+        _diseases = [1, 2, 3, 4, 5]          # TODO: get diseases from db
         numDiseases = randint(1, 5)
         randomDiseases = sample(_diseases, numDiseases)
 
