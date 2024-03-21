@@ -271,14 +271,12 @@ def search():
                            pagination=pagination, search=search_str)
 
 
-# route to delete existing proband
+# route to delete existing proband (use crud)
 @app.route("/delete", methods=["POST"])
 def delete():
     try:
         email = request.form.get("email")
-        proband = Proband.query.filter_by(email=email).first()
-        proband.isActive = False
-        db.session.commit()
+        crud.delete_proband_by_email(email)
         return redirect(url_for('probands'))
     except Exception as e:
         handle_error(e)

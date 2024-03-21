@@ -19,7 +19,7 @@ from schemas.proband import ProbandCreate
 
 def get_all_active_probands():
     with get_db() as db:
-        return db.query(Proband).all()
+        return db.query(Proband).filter(Proband.isActive == 1).all()
 
 
 def get_all_genders():
@@ -69,6 +69,16 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
             db.commit()
 
         return proband
+
+
+def delete_proband_by_email(proband_email):
+    with get_db() as db:
+        proband = db.query(Proband).filter(Proband.email == proband_email).first()
+        if proband:
+            proband.isActive = 0
+            db.commit()
+            return True
+        return False
 
 
 def create_country(_countrycode, _name):
@@ -162,8 +172,6 @@ def diseases_to_medication(probandId):
         allDiseases = db.query(ProbandDiseases).filter(ProbandDiseases.probandId == probandId)
         diseaseIds = [disease.sicknessId for disease in allDiseases]
         diseaseNames = [db.query(Diseases).get(disease_id).name for disease_id in diseaseIds]
-
-
 
         # Definition der Zuordnung von Krankheiten zu Medikamenten
         medication_mapping = {
