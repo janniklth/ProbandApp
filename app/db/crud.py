@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, sample
 
 from pydantic import ValidationError
 from sqlalchemy import func, inspect, true
@@ -43,13 +43,13 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
         db.add(proband)
         db.commit()
 
-        # generate between 1 and 5 random diseases
-        _diseases = []
-        for i in range(randint(1, 5)):
-            _diseases.append(randint(0, 4))
+        # generate between 1 and 5 unique random diseases
+        _diseases = [1, 2, 3, 4, 5]
+        numDiseases = randint(1, 5)
+        randomDiseases = sample(_diseases, numDiseases)
 
         # add diseases to db
-        for disease in _diseases:
+        for disease in randomDiseases:
             db.add(ProbandSickness(probandId=proband.id, sicknessId=disease))
         db.commit()
 
