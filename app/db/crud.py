@@ -8,8 +8,9 @@ from models.country import Country
 from models.medication import Medication
 from models.proband import Proband
 from models.gender import Gender
-from models.sickness import Sickness
-from models.probandSickness import ProbandSickness
+from models.diseases import Diseases
+from models.probandDiseases import ProbandDiseases
+from models.probandMediaction import ProbandMedication
 
 from schemas.proband import Proband as ProbandSchema
 from schemas.gender import Gender as GenderSchema
@@ -39,19 +40,33 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
         # create new proband and add it to the db
         proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, genderId=_gender, birthday=_birthday,
                           weight=_weight, height=_height, health=_health, countryId=_countryId, isActive=_isActive)
-        print("created new proband : " + proband.firstName)
+
         db.add(proband)
         db.commit()
 
         # generate between 1 and 5 unique random diseases
-        _diseases = [1, 2, 3, 4, 5]          # TODO: get diseases from db
-        numDiseases = randint(1, 5)
-        randomDiseases = sample(_diseases, numDiseases)
+        try:
+            # Lese alle Krankheiten aus der Datenbank
+            _all_diseases = db.query(Diseases).all()
 
-        # add diseases to db
-        for disease in randomDiseases:
-            db.add(ProbandSickness(probandId=proband.id, sicknessId=disease))
-        db.commit()
+            # Extrahiere die IDs der Krankheiten und speichere sie in einem Array
+            disease_ids = [disease.id for disease in _all_diseases]  # TODO: get diseases from db
+            numDiseases = randint(1, 5)
+            randomDiseases = sample(disease_ids, numDiseases)
+
+            # add diseases to db
+            for disease in randomDiseases:
+                db.add(ProbandDiseases(probandId=proband.id, sicknessId=disease))
+                db.commit()
+        except Exception as noDisease:
+            print(f" {noDisease}")
+
+        # assign medication to proband
+        medicationsForProband = diseases_to_medication(probandId=proband.id)
+
+        for medication in medicationsForProband:
+            db.add(ProbandMedication(probandId=proband.id, medicationId=medication))
+            db.commit()
 
         return proband
 
@@ -59,7 +74,6 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
 def create_country(_countrycode, _name):
     with get_db() as db:
         country = Country(countrycode=_countrycode, name=_name)
-        print("created new country : " + country.name)
         db.add(country)
         db.commit()
         return country
@@ -68,7 +82,6 @@ def create_country(_countrycode, _name):
 def create_gender(_name):
     with get_db() as db:
         gender = Gender(name=_name)
-        print("created new gender : " + gender.name)
         db.add(gender)
         db.commit()
         return gender
@@ -77,19 +90,17 @@ def create_gender(_name):
 def create_medication(_name):
     with get_db() as db:
         medication = Medication(name=_name)
-        print("created new medication : " + medication.name)
         db.add(medication)
         db.commit()
         return medication
 
 
-def create_sickness(_name):
+def create_diseases(_name):
     with get_db() as db:
-        sickness = Sickness(name=_name)
-        print("created new medication : " + sickness.name)
-        db.add(sickness)
+        disease = Diseases(name=_name)
+        db.add(disease)
         db.commit()
-        return sickness
+        return disease
 
 
 def load_initial_data():
@@ -115,7 +126,7 @@ def load_initial_data():
                                 if current_table == "Medikament":
                                     create_medication(line.strip("'"))
                                 elif current_table == "Krankheit":
-                                    create_sickness(line.strip("'"))
+                                    create_diseases(line.strip("'"))
 
                                 elif current_table == "Geschlecht":
                                     create_gender(line.strip("'"))
@@ -146,6 +157,35 @@ def load_initial_data():
 
 
 # TODO: implement duplicates function
+def diseases_to_medication(probandId):
+    with get_db() as db:
+        allDiseases = db.query(ProbandDiseases).filter(ProbandDiseases.probandId == probandId)
+        diseaseIds = [disease.sicknessId for disease in allDiseases]
+        diseaseNames = [db.query(Diseases).get(disease_id).name for disease_id in diseaseIds]
+
+
+
+        # Definition der Zuordnung von Krankheiten zu Medikamenten
+        medication_mapping = {
+            (1, 2, 3, 4, 5): [6, 1],
+            # Rückenschmerzen, Bluthochdruck, Fehlsichtigkeit, Fettstoffwechselstörung, Grippe -> Supix, Wirknix
+            (1, 4, 5): [2],  # Rückenschmerzen, Fettstoffwechselstörung, Grippe -> Machmichfix
+            (2, 4): [4, 5],  # Bluthochdruck, Fettstoffwechselstörung -> Gesundix, Kannix
+            (3,): [7],  # Fehlsichtigkeit -> Istnix
+            (): [3]  # Sonst -> Tutnix
+        }
+
+        # Funktion zur Ermittlung der Medikamente basierend auf den Krankheiten
+        def get_medications_for_diseases(diseases):
+            for diseases_combination, medications in medication_mapping.items():
+                if set(diseases) == set(diseases_combination):
+                    return medications
+            return [3]  # Wenn keine passende Kombination gefunden wird, gib Tutnix zurück
+
+        medications = get_medications_for_diseases(diseaseIds)
+        return medications
+
+
 def find_duplicates():
     pass
 
