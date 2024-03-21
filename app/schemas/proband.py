@@ -14,6 +14,7 @@ class ProbandBase(BaseModel):
     health: float
     country_id: int
     isActive: bool
+    bmi: float
     lastChanged: datetime
 
 
