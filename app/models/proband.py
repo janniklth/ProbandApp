@@ -1,3 +1,5 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from app.db.base_class import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import BigInteger, Integer, UUID, String, Column, ForeignKey, Date, Float, Boolean, TIMESTAMP
@@ -18,3 +20,8 @@ class Proband(Base):
     countryId = mapped_column(BigInteger, ForeignKey("COUNTRY.id", ondelete="SET NULL"), nullable=False)
     isActive = mapped_column(Boolean, nullable=False)
     lastChanged = mapped_column(TIMESTAMP, nullable=False)
+
+    # calculate body mass index
+    @hybrid_property
+    def bmi(self):
+        return self.weight / ((self.height/100) ** 2)
