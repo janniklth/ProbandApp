@@ -321,7 +321,7 @@ def update():
                 proband.genderId = newmedi
                 proband.birthday = newbirthday
                 proband.weight = newweight
-                proband.height = newweight
+                proband.height = newheight
                 proband.health = newhealth
 
                 db.commit()
