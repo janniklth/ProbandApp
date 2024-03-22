@@ -159,8 +159,10 @@ def load_initial_data():
                         db.commit()
                     print("we seeded the db succesfully")
 
+
                 else:
                     print("proband table already filled with data")
+                    find_duplicates()
 
         except Exception as kabut:
             print(f" {kabut}")
@@ -201,7 +203,17 @@ def get_medications_for_proband(proband_id: int) -> List[int]:
 
 # TODO: implement duplicates function
 def find_duplicates():
-    pass
+    with (get_db() as db):
+        subquery = db.query(Proband.email, func.count(Proband.email).label("email_count")).group_by(
+            Proband.email).having(func.count(Proband.email) > 1).subquery()
+
+        duplicated_probands = db.query(Proband).join(subquery, Proband.email == subquery.c.email).all()
+
+        for proband in duplicated_probands:
+            print(
+                f"DOPPELLT! ID: {proband.id}, Email: {proband.email}, Proband: {proband.firstName} {proband.lastName}")
+
+        return duplicated_probands
 
 
 def handle_error(e):
