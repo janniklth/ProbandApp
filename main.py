@@ -302,12 +302,11 @@ def update():
         medi = request.form.get("genselect")
         # TODO: add divers gender and more
         with get_db() as db:
-            all_genders_in_database = db.query(Gender).all()
+
             try:
                 medi = db.query(Gender).filter(Gender.name == medi).first()
                 newmedi = medi.id
-                print("newgender")
-                print(newmedi)
+
                 proband = db.query(Proband).filter(Proband.email == oldemail).first()
 
                 updated_proband = Proband(firstName=newfirstname, lastName=newlastname, email=newemail, genderId=medi,
@@ -333,22 +332,6 @@ def update():
                 print(f"Gender not found in database")
                 return redirect(url_for('index'))
 
-        # if medi == 'M':
-        #     medi = 1
-        # else:
-        #     medi = 2
-        # p = Proband.query.filter_by(email=oldemail).first()
-        # p.firstname = newfirstname
-        # p.lastname = newlastname
-        # p.email = newemail
-        # p.gender = medi
-        # p.birthday = newbirthday
-        # p.height = newheight
-        # p.weight = newweight
-        # p.health = newhealth
-        # db.session.commit()
-        # return redirect(url_for('probands'))
-
     except Exception as e:
         handle_error(e)
         return redirect(url_for('index'))
@@ -371,10 +354,7 @@ def add():
                                 request.form.get("height"), request.form.get("weight"), request.form.get("health"),
                                 sqlalchemy.true())
 
-            # crud.create_proband("fghj", "zuio",
-            #                     "ghjk", medi, "01.01.2000",
-            #                     "30", "20", "1",
-            #                     sqlalchemy.true())
+
             return redirect(url_for('index'))
         except Exception as e:
             handle_error(e)
