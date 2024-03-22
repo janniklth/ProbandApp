@@ -1,21 +1,17 @@
 from random import randint, sample
 from typing import List
 
-from pydantic import ValidationError
-from sqlalchemy import func, inspect, true
+from email_validator import validate_email, EmailNotValidError
+from sqlalchemy import func, inspect
 
 from app.db.session import get_db, engine
 from models.country import Country
+from models.diseases import Diseases
+from models.gender import Gender
 from models.medication import Medication
 from models.proband import Proband
-from models.gender import Gender
-from models.diseases import Diseases
 from models.probandDiseases import ProbandDiseases
 from models.probandMedication import ProbandMedication
-
-from schemas.proband import Proband as ProbandSchema
-from schemas.gender import Gender as GenderSchema
-from schemas.proband import ProbandCreate
 
 
 def get_all_active_probands():
@@ -163,6 +159,7 @@ def load_initial_data():
                 else:
                     print("proband table already filled with data")
                     find_duplicates()
+                    validate_proband_email()
 
         except Exception as kabut:
             print(f" {kabut}")
@@ -245,3 +242,13 @@ def calculate_stddev_height():
     with get_db() as db:
         std = db.query(func.stddev(Proband.height)).scalar()
         return std if std else 0.0
+
+
+def validate_proband_email():
+    with get_db() as db:
+        all_probands = db.query(Proband).all()
+        for proband in all_probands:
+            try:
+                v = validate_email(proband.email)
+            except EmailNotValidError as e:
+                print(f"Proband {proband.id} email is not a valid email: {str(e)}")
