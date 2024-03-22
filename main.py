@@ -218,12 +218,13 @@ def probands():
 
         # get all active probands and count them
         probands = crud.get_all_active_probands()
+
         total = len(probands)
 
         # get paginated probands
         pagination_probands = crud.get_probands_with_pagination(probands, offset=offset, per_page=per_page)
         pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4')
-        return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
+        return render_template('probands.html', probandsList=probands, genders=genders, page=page,
                                per_page=per_page, pagination=pagination)
 
     else:
@@ -310,9 +311,10 @@ def update():
                 proband = db.query(Proband).filter(Proband.email == oldemail).first()
 
                 updated_proband = Proband(firstName=newfirstname, lastName=newlastname, email=newemail, genderId=medi,
-                                  birthday=newbirthday,
-                                  weight=newweight, height=newheight, health=newhealth, countryId=proband.countryId,
-                                  isActive=proband.isActive)
+                                          birthday=newbirthday,
+                                          weight=newweight, height=newheight, health=newhealth,
+                                          countryId=proband.countryId,
+                                          isActive=proband.isActive)
 
                 proband.lastName = newlastname
                 proband.firstName = newfirstname
@@ -361,9 +363,8 @@ def add():
             medi = request.form.get("genselect")
             if medi == 'M':
                 medi = 1
-            else :
+            else:
                 medi = 2
-
 
             crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
                                 request.form.get("email"), medi, request.form.get("birthday"),
