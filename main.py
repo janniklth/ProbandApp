@@ -16,8 +16,9 @@ import json
 
 from app.db import crud
 from app.db.session import get_db
-from app.schemas.gender import Gender
+from models.gender import Gender
 from db.crud import handle_error
+from models.proband import Proband
 
 # create a new Flask app
 app = Flask(__name__)
@@ -280,6 +281,7 @@ def delete():
         return redirect(url_for('probands'))
     except Exception as e:
         handle_error(e)
+        return redirect(url_for('index'))
 
 
 # route to update existing proband
@@ -298,24 +300,56 @@ def update():
         newhealth = request.form.get("newhealth")
         medi = request.form.get("genselect")
         # TODO: add divers gender and more
-        if medi == 'M':
-            medi = 1
-        else:
-            medi = 2
-        p = Proband.query.filter_by(email=oldemail).first()
-        p.firstname = newfirstname
-        p.lastname = newlastname
-        p.email = newemail
-        p.gender = medi
-        p.birthday = newbirthday
-        p.height = newheight
-        p.weight = newweight
-        p.health = newhealth
-        db.session.commit()
-        return redirect(url_for('probands'))
+        with get_db() as db:
+            all_genders_in_database = db.query(Gender).all()
+            try:
+                medi = db.query(Gender).filter(Gender.name == medi).first()
+                newmedi = medi.id
+                print("newgender")
+                print(newmedi)
+                proband = db.query(Proband).filter(Proband.email == oldemail).first()
+
+                updated_proband = Proband(firstName=newfirstname, lastName=newlastname, email=newemail, genderId=medi,
+                                  birthday=newbirthday,
+                                  weight=newweight, height=newheight, health=newhealth, countryId=proband.countryId,
+                                  isActive=proband.isActive)
+
+                proband.lastName = newlastname
+                proband.firstName = newfirstname
+                proband.email = newemail
+                proband.genderId = newmedi
+                proband.birthday = newbirthday
+                proband.weight = newweight
+                proband.height = newweight
+                proband.health = newhealth
+
+                db.commit()
+                return redirect(url_for('probands'))
+
+            except Exception as gender_not_in_databas:
+                handle_error(gender_not_in_databas)
+                print(f"Gender not found in database")
+                return redirect(url_for('index'))
+
+        # if medi == 'M':
+        #     medi = 1
+        # else:
+        #     medi = 2
+        # p = Proband.query.filter_by(email=oldemail).first()
+        # p.firstname = newfirstname
+        # p.lastname = newlastname
+        # p.email = newemail
+        # p.gender = medi
+        # p.birthday = newbirthday
+        # p.height = newheight
+        # p.weight = newweight
+        # p.health = newhealth
+        # db.session.commit()
+        # return redirect(url_for('probands'))
 
     except Exception as e:
         handle_error(e)
+        return redirect(url_for('index'))
 
 
 # route to add new proband
