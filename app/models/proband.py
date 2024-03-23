@@ -2,7 +2,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.db.base_class import Base
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger, Integer, UUID, String, Column, ForeignKey, Date, Float, Boolean, TIMESTAMP
+from sqlalchemy import BigInteger, Integer, UUID, String, Column, ForeignKey, Date, Float, Boolean, TIMESTAMP, text
 
 
 class Proband(Base):
@@ -19,7 +19,7 @@ class Proband(Base):
     health = mapped_column(Float, nullable=False)
     countryId = mapped_column(BigInteger, ForeignKey("COUNTRY.id", ondelete="SET NULL"), nullable=False)
     isActive = mapped_column(Boolean, nullable=False)
-    lastChanged = mapped_column(TIMESTAMP, nullable=False)
+    lastChanged = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
     # calculate body mass index
     @hybrid_property
