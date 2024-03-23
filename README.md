@@ -1,1 +1,22 @@
-Hello Worlds
+# Proband App
+
+This is a database and python project for the database course of the DHBW Stuttgart. 
+It is a simple application to manage probands and their data such as names, birthdates, addresses and medical data.
+
+## Features
+- Add, edit and delete probands
+- ....
+
+## Technologies
+- Python
+- Flask
+- SQLAlchemy
+- MYSQL
+
+## Installation
+
+1. Clone the repository
+2. Install the requirements
+3. Run the initial.sql script to create the database
+4. Run the main.py file
+5. Open the browser and go to http://127.0.0.1:8080
