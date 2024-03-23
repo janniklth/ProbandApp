@@ -440,16 +440,24 @@ def report():
         total_inactive_probands = len(inactive_probands)
 
         # Calculate standard deviations
-        stddev_weight = crud.calculate_stddev_weight()
-        stddev_height = crud.calculate_stddev_height()
+        stddev_weight = round(crud.calculate_stddev_weight(), 3)
+        stddev_height = round(crud.calculate_stddev_height(), 3)
+        stddev_height_male = round(crud.calculate_stddev_male_height(), 3)
+        stddev_height_female = round(crud.calculate_stddev_female_height(), 3)
+        stddev_weight_male = round(crud.calculate_stddev_male_weight(), 3)
+        stddev_weight_female = round(crud.calculate_stddev_female_weight(), 3)
 
         # Create report data
         report_data = {
-            'total_probands': total_probands,
-            'total_active_probands': total_active_probands,
-            'total_inactive_probands': total_inactive_probands,
-            'stddev_weight': stddev_weight,
-            'stddev_height': stddev_height
+            'total probands:': total_probands,
+            'total active probands:': total_active_probands,
+            'total inactive probands:': total_inactive_probands,
+            'stddev height:': stddev_height,
+            'stddev height male:': stddev_height_male,
+            'stddev height female:': stddev_height_female,
+            'stddev weight:': stddev_weight,
+            'stddev weight male:': stddev_weight_male,
+            'stddev weight female:': stddev_weight_female
         }
 
         print(report_data)

@@ -244,6 +244,34 @@ def calculate_stddev_height():
         return std if std else 0.0
 
 
+# TODO: get gender id from database
+def calculate_stddev_male_height():
+    with get_db() as db:
+        std = db.query(func.stddev(Proband.height)).filter(Proband.genderId == 1).scalar()
+        return std if std else 0.0
+
+
+# TODO: get gender id from database
+def calculate_stddev_female_height():
+    with get_db() as db:
+        std = db.query(func.stddev(Proband.height)).filter(Proband.genderId == 2).scalar()
+        return std if std else 0.0
+
+
+# TODO: get gender id from database
+def calculate_stddev_male_weight():
+    with get_db() as db:
+        std = db.query(func.stddev(Proband.weight)).filter(Proband.genderId == 1).scalar()
+        return std if std else 0.0
+
+
+# TODO: get gender id from database
+def calculate_stddev_female_weight():
+    with get_db() as db:
+        std = db.query(func.stddev(Proband.weight)).filter(Proband.genderId == 2).scalar()
+        return std if std else 0.0
+
+
 def validate_proband_email():
     with get_db() as db:
         all_probands = db.query(Proband).all()
