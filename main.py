@@ -300,37 +300,11 @@ def update():
         newheight = request.form.get("newheight")
         newhealth = request.form.get("newhealth")
         medi = request.form.get("genselect")
-        # TODO: add divers gender and more
-        with get_db() as db:
 
-            try:
-                medi = db.query(Gender).filter(Gender.name == medi).first()
-                newmedi = medi.id
+        crud.update_proband(oldemail, newlastname, newfirstname, newemail, medi,
+                            newbirthday, newweight, newheight, newhealth)
 
-                proband = db.query(Proband).filter(Proband.email == oldemail).first()
-
-                updated_proband = Proband(firstName=newfirstname, lastName=newlastname, email=newemail, genderId=medi,
-                                          birthday=newbirthday,
-                                          weight=newweight, height=newheight, health=newhealth,
-                                          countryId=proband.countryId,
-                                          isActive=proband.isActive)
-
-                proband.lastName = newlastname
-                proband.firstName = newfirstname
-                proband.email = newemail
-                proband.genderId = newmedi
-                proband.birthday = newbirthday
-                proband.weight = newweight
-                proband.height = newheight
-                proband.health = newhealth
-
-                db.commit()
-                return redirect(url_for('probands'))
-
-            except Exception as gender_not_in_databas:
-                handle_error(gender_not_in_databas)
-                print(f"Gender not found in database")
-                return redirect(url_for('index'))
+        return render_template('/probands.html')
 
     except Exception as e:
         handle_error(e)
@@ -342,18 +316,14 @@ def update():
 def add():
     if request.method == 'POST':
         try:
-            # TODO: add divers gender and more
+
             medi = request.form.get("genselect")
-            if medi == 'M':
-                medi = 1
-            else:
-                medi = 2
+            gender_id = crud.get_gender_id(medi)
 
             crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
-                                request.form.get("email"), medi, request.form.get("birthday"),
+                                request.form.get("email"), gender_id, request.form.get("birthday"),
                                 request.form.get("height"), request.form.get("weight"), request.form.get("health"),
                                 sqlalchemy.true())
-
 
             return redirect(url_for('index'))
         except Exception as e:

@@ -24,9 +24,40 @@ def get_all_genders():
         return db.query(Gender).all()
 
 
+def get_gender_id(gender_name):
+    with get_db() as db:
+        gender = db.query(Gender).filter(Gender.name == gender_name).first()
+        gender_id = gender.id
+        return gender_id
+
+
 def get_proband_by_id(proband_id):
     with get_db() as db:
         return db.query(Proband).filter(Proband.id == proband_id).first()
+
+
+def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername, newbirthday, newweight, newheight, newhealth):
+    with get_db() as db:
+        try:
+            gender_id = get_gender_id(newgendername)
+        except Exception as gender_name_not_found:
+            print(f"Gender name not found in database!")
+            handle_error(gender_name_not_found)
+
+        try:
+            proband = db.query(Proband).filter(Proband.email == oldemail).first()
+            proband.lastName = newlastname
+            proband.firstName = newfirstname
+            proband.email = newemail
+            proband.genderId = gender_id
+            proband.birthday = newbirthday
+            proband.weight = newweight
+            proband.height = newheight
+            proband.health = newhealth
+
+            db.commit()
+        except Exception as e:
+            handle_error(e)
 
 
 def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _height, _health="1.0", _isActive=1):
@@ -159,7 +190,7 @@ def load_initial_data():
                 else:
                     print("proband table already filled with data")
                     find_duplicates()
-                    validate_proband_email()
+                    #validate_proband_email()
 
         except Exception as kabut:
             print(f" {kabut}")
