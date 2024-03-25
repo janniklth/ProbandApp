@@ -440,6 +440,9 @@ def report():
 
 if __name__ == "__main__":
     # load initial data if database is empty
+    print("running sql script")
+    crud.run_sql_script()
+    print("running initial data")
     crud.load_initial_data()
 
     # run the app

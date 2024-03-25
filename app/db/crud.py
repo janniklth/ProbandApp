@@ -2,7 +2,7 @@ from random import randint, sample
 from typing import List
 
 from email_validator import validate_email, EmailNotValidError
-from sqlalchemy import func, inspect
+from sqlalchemy import func, inspect, text
 
 from app.db.session import get_db, engine
 from models.country import Country
@@ -36,7 +36,8 @@ def get_proband_by_id(proband_id):
         return db.query(Proband).filter(Proband.id == proband_id).first()
 
 
-def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername, newbirthday, newweight, newheight, newhealth):
+def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername, newbirthday, newweight, newheight,
+                   newhealth):
     with get_db() as db:
         try:
             gender_id = get_gender_id(newgendername)
@@ -190,7 +191,7 @@ def load_initial_data():
                 else:
                     print("proband table already filled with data")
                     find_duplicates()
-                    #validate_proband_email()
+                    # validate_proband_email()
 
         except Exception as kabut:
             print(f" {kabut}")
@@ -311,3 +312,24 @@ def validate_proband_email():
                 v = validate_email(proband.email)
             except EmailNotValidError as e:
                 print(f"Proband {proband.id} email is not a valid email: {str(e)}")
+
+
+def run_sql_script():
+    with engine.connect() as conn:
+        print("Running SQL script...")
+        with open("initial.sql", 'r') as file:
+            content = file.read()
+            commands = content.split(';')
+            transaction = conn.begin()
+            try:
+                for command in commands:
+                    # Entfernen von DELIMITER-Anweisungen und Leerraum
+                    command = command.strip()
+                    if command and not command.startswith('DELIMITER'):
+                        conn.execute(text(command))
+                transaction.commit()
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                transaction.rollback()
+            else:
+                print("Script executed successfully.")
