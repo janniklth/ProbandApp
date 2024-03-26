@@ -303,6 +303,45 @@ def calculate_stddev_female_weight():
         std = db.query(func.stddev(Proband.weight)).filter(Proband.genderId == 2).scalar()
         return std if std else 0.0
 
+def calculate_avg_weight():
+    with get_db() as db:
+        avg = db.query(func.avg(Proband.weight)).scalar()
+        return avg if avg else 0.0
+
+
+def calculate_avg_height():
+    with get_db() as db:
+        avg = db.query(func.avg(Proband.height)).scalar()
+        return avg if avg else 0.0
+
+
+# TODO: get gender id from database
+def calculate_avg_male_height():
+    with get_db() as db:
+        avg = db.query(func.avg(Proband.height)).filter(Proband.genderId == 1).scalar()
+        return avg if avg else 0.0
+
+
+# TODO: get gender id from database
+def calculate_avg_female_height():
+    with get_db() as db:
+        avg = db.query(func.avg(Proband.height)).filter(Proband.genderId == 2).scalar()
+        return avg if avg else 0.0
+
+
+# TODO: get gender id from database
+def calculate_avg_male_weight():
+    with get_db() as db:
+        avg = db.query(func.avg(Proband.weight)).filter(Proband.genderId == 1).scalar()
+        return avg if avg else 0.0
+
+
+# TODO: get gender id from database
+def calculate_avg_female_weight():
+    with get_db() as db:
+        avg = db.query(func.avg(Proband.weight)).filter(Proband.genderId == 2).scalar()
+        return avg if avg else 0.0
+
 
 def validate_proband_email():
     with get_db() as db:

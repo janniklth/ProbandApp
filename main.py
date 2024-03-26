@@ -417,17 +417,31 @@ def report():
         stddev_weight_male = round(crud.calculate_stddev_male_weight(), 3)
         stddev_weight_female = round(crud.calculate_stddev_female_weight(), 3)
 
+        # Calculate averages
+        avg_height = round(crud.calculate_avg_height(), 2)
+        avg_height_male = round(crud.calculate_avg_male_height(), 2)
+        avg_height_female = round(crud.calculate_avg_female_height(), 2)
+        avg_weight = round(crud.calculate_avg_weight(), 2)
+        avg_weight_male = round(crud.calculate_avg_male_weight(), 2)
+        avg_weight_female = round(crud.calculate_avg_female_weight(), 2)
+
         # Create report data
         report_data = {
-            'total probands:': total_probands,
-            'total active probands:': total_active_probands,
-            'total inactive probands:': total_inactive_probands,
-            'stddev height:': stddev_height,
-            'stddev height male:': stddev_height_male,
-            'stddev height female:': stddev_height_female,
-            'stddev weight:': stddev_weight,
-            'stddev weight male:': stddev_weight_male,
-            'stddev weight female:': stddev_weight_female
+            'total probands': total_probands,
+            'total active probands': total_active_probands,
+            'total inactive probands': total_inactive_probands,
+            'stddev height': stddev_height,
+            'stddev height male': stddev_height_male,
+            'stddev height female': stddev_height_female,
+            'stddev weight': stddev_weight,
+            'stddev weight male': stddev_weight_male,
+            'stddev weight female': stddev_weight_female,
+            'avg height': avg_height,
+            'avg height male': avg_height_male,
+            'avg height female': avg_height_female,
+            'avg weight': avg_weight,
+            'avg weight male': avg_weight_male,
+            'avg weight female': avg_weight_female
         }
 
         print(report_data)
