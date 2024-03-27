@@ -16,7 +16,7 @@ from models.probandMedication import ProbandMedication
 
 def get_all_active_probands():
     with get_db() as db:
-        return db.query(Proband).filter(Proband.isActive == 1).all()
+        return db.query(Proband).filter(Proband.is_active == 1).all()
 
 
 def get_all_genders():
@@ -25,10 +25,14 @@ def get_all_genders():
 
 
 def get_gender_id(gender_name):
-    with get_db() as db:
-        gender = db.query(Gender).filter(Gender.name == gender_name).first()
-        gender_id = gender.id
-        return gender_id
+    try:
+        with get_db() as db:
+            gender = db.query(Gender).filter(Gender.name == gender_name).first()
+            gender_id = gender.id
+            return gender_id
+    except Exception as invalid_gender_name:
+        print(f"Gender name not found in database!")
+        handle_error(invalid_gender_name)
 
 
 def get_proband_by_id(proband_id):
@@ -39,18 +43,14 @@ def get_proband_by_id(proband_id):
 def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername, newbirthday, newweight, newheight,
                    newhealth):
     with get_db() as db:
-        try:
-            gender_id = get_gender_id(newgendername)
-        except Exception as gender_name_not_found:
-            print(f"Gender name not found in database!")
-            handle_error(gender_name_not_found)
 
         try:
+            gender_id = get_gender_id(newgendername)
             proband = db.query(Proband).filter(Proband.email == oldemail).first()
-            proband.lastName = newlastname
-            proband.firstName = newfirstname
+            proband.last_name = newlastname
+            proband.first_name = newfirstname
             proband.email = newemail
-            proband.genderId = gender_id
+            proband.gender_id = gender_id
             proband.birthday = newbirthday
             proband.weight = newweight
             proband.height = newheight
@@ -61,17 +61,20 @@ def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername,
             handle_error(e)
 
 
-def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _height, _health="1.0", _isActive=1):
+def create_proband(_first_name, _last_name, _email, _gender, _birthday, _weight, _height, _health="1.0", _is_active=1):
     with get_db() as db:
+        try:
         # generate random country
-        _countryId = randint(0, 26)
+            _countryId = randint(0, 26)
 
         # create new proband and add it to the db
-        proband = Proband(firstName=_firstName, lastName=_lastName, email=_email, genderId=_gender, birthday=_birthday,
-                          weight=_weight, height=_height, health=_health, countryId=_countryId, isActive=_isActive)
+            proband = Proband(first_name=_first_name, last_name=_last_name, email=_email, gender_id=_gender, birthday=_birthday,
+                          weight=_weight, height=_height, health=_health, country_id=_countryId, is_active=_is_active)
 
-        db.add(proband)
-        db.commit()
+            db.add(proband)
+            db.commit()
+        except Exception as mannnnn:
+            print(f"Proband couldnt be added")
 
         # generate between 1 and 5 unique random diseases
         try:
@@ -80,20 +83,20 @@ def create_proband(_firstName, _lastName, _email, _gender, _birthday, _weight, _
 
             # Extrahiere die IDs der Krankheiten und speichere sie in einem Array
             disease_ids = [disease.id for disease in _all_diseases]  # TODO: get diseases from db
-            numDiseases = randint(1, 5)
-            randomDiseases = sample(disease_ids, numDiseases)
+            num_diseases = randint(1, 5)
+            random_diseases = sample(disease_ids, num_diseases)
 
             # add diseases to db
-            for disease in randomDiseases:
-                db.add(ProbandDiseases(probandId=proband.id, sicknessId=disease))
+            for disease in random_diseases:
+                db.add(ProbandDiseases(proband_id=proband.id, sickness_id=disease))
                 db.commit()
         except Exception as noDisease:
             print(f" {noDisease}")
 
         # assign medication to proband
-        medicationsForProband = get_medications_for_proband(proband.id)
-        for medication in medicationsForProband:
-            db.add(ProbandMedication(probandId=proband.id, medicationId=medication))
+        medications_for_proband = get_medications_for_proband(proband.id)
+        for medication in medications_for_proband:
+            db.add(ProbandMedication(proband_id=proband.id, medication_id=medication))
             db.commit()
 
         return proband
@@ -103,7 +106,7 @@ def delete_proband_by_email(proband_email):
     with get_db() as db:
         proband = db.query(Proband).filter(Proband.email == proband_email).first()
         if proband:
-            proband.isActive = 0
+            proband.is_active = 0
             db.commit()
             return True
         return False
@@ -200,8 +203,8 @@ def load_initial_data():
 def get_diseases_for_proband(proband_id: int) -> List[int]:
     """Retrieve diseases associated with a specific proband."""
     with get_db() as db:
-        all_diseases = db.query(ProbandDiseases).filter(ProbandDiseases.probandId == proband_id)
-        disease_ids = [disease.sicknessId for disease in all_diseases]
+        all_diseases = db.query(ProbandDiseases).filter(ProbandDiseases.proband_id == proband_id)
+        disease_ids = [disease.sickness_id for disease in all_diseases]
     return disease_ids
 
 
@@ -240,7 +243,7 @@ def find_duplicates():
 
         for proband in duplicated_probands:
             print(
-                f"DOPPELLT! ID: {proband.id}, Email: {proband.email}, Proband: {proband.firstName} {proband.lastName}")
+                f"DOPPELLT! ID: {proband.id}, Email: {proband.email}, Proband: {proband.first_name} {proband.last_name}")
 
         return duplicated_probands
 
@@ -279,29 +282,30 @@ def calculate_stddev_height():
 # TODO: get gender id from database
 def calculate_stddev_male_height():
     with get_db() as db:
-        std = db.query(func.stddev(Proband.height)).filter(Proband.genderId == 1).scalar()
+        std = db.query(func.stddev(Proband.height)).filter(Proband.gender_id == 1).scalar()
         return std if std else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_female_height():
     with get_db() as db:
-        std = db.query(func.stddev(Proband.height)).filter(Proband.genderId == 2).scalar()
+        std = db.query(func.stddev(Proband.height)).filter(Proband.gender_id == 2).scalar()
         return std if std else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_male_weight():
     with get_db() as db:
-        std = db.query(func.stddev(Proband.weight)).filter(Proband.genderId == 1).scalar()
+        std = db.query(func.stddev(Proband.weight)).filter(Proband.gender_id == 1).scalar()
         return std if std else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_female_weight():
     with get_db() as db:
-        std = db.query(func.stddev(Proband.weight)).filter(Proband.genderId == 2).scalar()
+        std = db.query(func.stddev(Proband.weight)).filter(Proband.gender_id == 2).scalar()
         return std if std else 0.0
+
 
 def calculate_avg_weight():
     with get_db() as db:
@@ -318,28 +322,28 @@ def calculate_avg_height():
 # TODO: get gender id from database
 def calculate_avg_male_height():
     with get_db() as db:
-        avg = db.query(func.avg(Proband.height)).filter(Proband.genderId == 1).scalar()
+        avg = db.query(func.avg(Proband.height)).filter(Proband.gender_id == 1).scalar()
         return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_female_height():
     with get_db() as db:
-        avg = db.query(func.avg(Proband.height)).filter(Proband.genderId == 2).scalar()
+        avg = db.query(func.avg(Proband.height)).filter(Proband.gender_id == 2).scalar()
         return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_male_weight():
     with get_db() as db:
-        avg = db.query(func.avg(Proband.weight)).filter(Proband.genderId == 1).scalar()
+        avg = db.query(func.avg(Proband.weight)).filter(Proband.gender_id == 1).scalar()
         return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_female_weight():
     with get_db() as db:
-        avg = db.query(func.avg(Proband.weight)).filter(Proband.genderId == 2).scalar()
+        avg = db.query(func.avg(Proband.weight)).filter(Proband.gender_id == 2).scalar()
         return avg if avg else 0.0
 
 

@@ -288,8 +288,6 @@ def delete():
 # route to update existing proband
 @app.route("/update", methods=["POST"])
 def update():
-    # TODO: add validation??
-    # TODO: clean up code
     try:
         oldemail = request.form.get("oldemail")
         newlastname = request.form.get("newlastname")
@@ -299,9 +297,9 @@ def update():
         newweight = request.form.get("newweight")
         newheight = request.form.get("newheight")
         newhealth = request.form.get("newhealth")
-        medi = request.form.get("genselect")
+        newgender = request.form.get("genselect")
 
-        crud.update_proband(oldemail, newlastname, newfirstname, newemail, medi,
+        crud.update_proband(oldemail, newlastname, newfirstname, newemail, newgender,
                             newbirthday, newweight, newheight, newhealth)
 
         return render_template('/probands.html')
@@ -401,8 +399,8 @@ def report():
         probands = crud.get_all_active_probands()
 
         # Filter active and inactive probands
-        active_probands = [proband for proband in probands if proband.isActive]
-        inactive_probands = [proband for proband in probands if not proband.isActive]
+        active_probands = [proband for proband in probands if proband.is_active]
+        inactive_probands = [proband for proband in probands if not proband.is_active]
 
         # Calculate total probands and counts
         total_probands = len(probands)

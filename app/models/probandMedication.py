@@ -8,5 +8,5 @@ class ProbandMedication(Base):
     __tablename__ = "PROBANDMEDICATION"
 
     id = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    probandId = mapped_column(BigInteger, ForeignKey("PROBAND.id"), primary_key=True)
-    medicationId = mapped_column(BigInteger, ForeignKey("MEDICATION.id"), primary_key=True)
+    proband_id = mapped_column(BigInteger, ForeignKey("PROBAND.id"), primary_key=True)
+    medication_id = mapped_column(BigInteger, ForeignKey("MEDICATION.id"), primary_key=True)

@@ -41,17 +41,17 @@
                         <td>&ensp;
                             <form method="POST" action="./update" class="row" style="margin: 0;">
                                 <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                                    <input type="hidden" value="{{ p.lastName }}" name="oldlastname"
+                                    <input type="hidden" value="{{ p.last_name }}" name="oldlastname"
                                            class="form-control"
                                            style="margin: 0; padding: 0;">
-                                    <input type="text" value="{{ p.lastName }}" name="newlastname" class="form-control"
+                                    <input type="text" value="{{ p.last_name }}" name="newlastname" class="form-control"
                                            style="margin: 0; padding: 0;">
                                 </div>
                                 <div class="col" style="margin: 0; padding-left: 1px; padding-right: 1px;">
-                                    <input type="hidden" value="{{ p.firstName }}" name="oldfirstname"
+                                    <input type="hidden" value="{{ p.first_name }}" name="oldfirstname"
                                            class="form-control"
                                            style="margin: 0; padding: 0;">
-                                    <input type="text" value="{{ p.firstName }}" name="newfirstname"
+                                    <input type="text" value="{{ p.first_name }}" name="newfirstname"
                                            class="form-control"
                                            style="margin: 0; padding: 0;">
                                 </div>
@@ -87,7 +87,7 @@
                                 <div class="col-1" style="margin: 0; padding-left: 1px; padding-right: 1px;">
                                     <select name="genselect" class="custom-select" style="margin: 0; padding: 0;">
                                         {% for g in genders %}
-                                            <option value="{{ g.name }}" {% if g.id==p.genderId %}
+                                            <option value="{{ g.name }}" {% if g.id==p.gender_id %}
                                                     selected {% endif %}>{{ g.name }}
                                             </option>
                                         {% endfor %}
