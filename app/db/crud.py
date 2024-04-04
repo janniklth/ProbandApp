@@ -112,6 +112,27 @@ def delete_proband_by_email(proband_email):
         return False
 
 
+def search_probands(search_term, search_category):
+    with get_db() as db:
+        if search_category == "firstname":
+            return db.query(Proband).filter(Proband.first_name.like(f"%{search_term}%") & Proband.is_active == 1).all()
+        elif search_category == "lastname":
+            return db.query(Proband).filter(Proband.last_name.like(f"%{search_term}%") & Proband.is_active == 1).all()
+        elif search_category == "email":
+            return db.query(Proband).filter(Proband.email.like(f"%{search_term}%") & Proband.is_active == 1).all()
+        elif search_category == "gender":
+            gender_id = get_gender_id(search_term)
+            return db.query(Proband).filter(Proband.gender_id.like(f"%{gender_id}%") & Proband.is_active == 1).all()
+        elif search_category == "birthday":
+            return db.query(Proband).filter(Proband.birthday.like(f"%{search_term}%") & Proband.is_active == 1).all()
+        elif search_category == "weight":
+            return db.query(Proband).filter(Proband.weight.like(f"%{search_term}%") & Proband.is_active == 1).all()
+        elif search_category == "height":
+            return search_category == db.query(Proband).filter(Proband.height.like(f"%{search_term}%") & Proband.is_active == 1).all()
+        else:
+            return None
+
+
 def create_country(_countrycode, _name):
     with get_db() as db:
         country = Country(countrycode=_countrycode, name=_name)

@@ -248,6 +248,7 @@ def search():
         session['search'] = ""
 
     search_str = request.form.get('search_probands')
+    search_category = request.form.get('search_field')
 
     if session['search'] is None or session['search'] == "":
         session['search'] = search_str
@@ -258,19 +259,20 @@ def search():
 
     search_str = determine_search_string()
 
-    formatted_search = "%{}%".format(search_str)
-    # TODO: only search for active probands
-    probands = Proband.query.filter(Proband.lastname.like(formatted_search)).all()
+    search_result = crud.search_probands(search_str, search_category)
 
-    genders = Gender.query.all()
-    total = len(probands)
-    pagination_probands = get_probands(probands, offset=offset, per_page=per_page)
+    #genders = Gender.query.all()
+    genders = crud.get_all_genders()
+    if search_result is None:
+        total = 0
+    else:
+        total = len(search_result)
+    pagination_probands = crud.get_probands_with_pagination(search_result, offset=offset, per_page=per_page)
     pagination = Pagination(page=page, per_page=per_page, total=total,
                             css_framework='bootstrap4')
 
-    return render_template('/probands.html', probandsList=pagination_probands, genders=genders, page=page,
-                           per_page=per_page,
-                           pagination=pagination, search=search_str)
+    return render_template('probands.html', probandsList=search_result, genders=genders, page=page,
+                           per_page=per_page, pagination=pagination)
 
 
 # route to delete existing proband (use crud)
