@@ -315,8 +315,7 @@ def add():
     if request.method == 'POST':
         try:
 
-            medi = request.form.get("genselect")
-            gender_id = crud.get_gender_id(medi)
+            gender_id = crud.get_gender_id(request.form.get("genselect"))
 
             crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
                                 request.form.get("email"), gender_id, request.form.get("birthday"),
