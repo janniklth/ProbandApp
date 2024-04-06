@@ -224,7 +224,7 @@ def probands():
         # get paginated probands
         pagination_probands = crud.get_probands_with_pagination(probands, offset=offset, per_page=per_page)
         pagination = Pagination(page=page, per_page=per_page, total=total, css_framework='bootstrap4')
-        return render_template('probands.html', probandsList=probands, genders=genders, page=page,
+        return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
                                per_page=per_page, pagination=pagination)
 
     else:
@@ -259,7 +259,6 @@ def search():
 
     search_str = determine_search_string()
 
-    search_result = crud.search_probands(search_str, search_category)
 
     #genders = Gender.query.all()
     genders = crud.get_all_genders()
