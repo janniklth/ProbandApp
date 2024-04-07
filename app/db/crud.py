@@ -64,12 +64,14 @@ def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername,
 def create_proband(_first_name, _last_name, _email, _gender, _birthday, _weight, _height, _health="1.0", _is_active=1):
     with get_db() as db:
         try:
-        # generate random country
+            # generate random country
             _countryId = randint(0, 26)
 
-        # create new proband and add it to the db
-            proband = Proband(first_name=_first_name, last_name=_last_name, email=_email, gender_id=_gender, birthday=_birthday,
-                          weight=_weight, height=_height, health=_health, country_id=_countryId, is_active=_is_active)
+            # create new proband and add it to the db
+            proband = Proband(first_name=_first_name, last_name=_last_name, email=_email, gender_id=_gender,
+                              birthday=_birthday,
+                              weight=_weight, height=_height, health=_health, country_id=_countryId,
+                              is_active=_is_active)
 
             db.add(proband)
             db.commit()
@@ -128,7 +130,8 @@ def search_probands(search_term, search_category):
         elif search_category == "weight":
             return db.query(Proband).filter(Proband.weight.like(f"%{search_term}%") & Proband.is_active == 1).all()
         elif search_category == "height":
-            return search_category == db.query(Proband).filter(Proband.height.like(f"%{search_term}%") & Proband.is_active == 1).all()
+            return search_category == db.query(Proband).filter(
+                Proband.height.like(f"%{search_term}%") & Proband.is_active == 1).all()
         else:
             return None
 
@@ -210,6 +213,13 @@ def load_initial_data():
 
                         db.commit()
                     print("we seeded the db succesfully")
+
+                    # adjust average weight and height for male and female probands
+                    adjust_male_avg_height(180.0)
+                    adjust_male_avg_weight(88.0)
+                    adjust_female_avg_height(167.0)
+                    adjust_female_avg_weight(69.0)
+
 
 
                 else:
@@ -371,6 +381,30 @@ def calculate_avg_female_weight():
         return avg if avg else 0.0
 
 
+def adjust_male_avg_weight(wanted_avg_weight):
+    # get current average and calculate difference
+    avg = calculate_avg_male_weight()
+    diff = wanted_avg_weight - avg
+
+
+def adjust_male_avg_height(wanted_avg_height):
+    # get current average
+    avg = calculate_avg_male_height()
+    diff = wanted_avg_height - avg
+
+
+def adjust_female_avg_weight(wanted_avg_weight):
+    # get current average
+    avg = calculate_avg_female_weight()
+    diff = wanted_avg_weight - avg
+
+
+def adjust_female_avg_height(wanted_avg_height):
+    # get current average
+    avg = calculate_avg_female_height()
+    diff = wanted_avg_height - avg
+
+
 def validate_proband_email():
     with get_db() as db:
         all_probands = db.query(Proband).all()
@@ -390,7 +424,7 @@ def run_sql_script():
             transaction = conn.begin()
             try:
                 for command in commands:
-                    # Entfernen von DELIMITER-Anweisungen und Leerraum
+                    # remove spaces and delimiters
                     command = command.strip()
                     if command and not command.startswith('DELIMITER'):
                         conn.execute(text(command))
