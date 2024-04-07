@@ -47,6 +47,7 @@ mysql = MySQL(app)
 db = SQLAlchemy(app)
 
 
+
 # def get_probands(items, offset=0, per_page=12):
 #     return items[offset: offset + per_page]
 
@@ -239,6 +240,14 @@ def determine_search_string():
         search_str = session['search']
     return search_str if search_str else ""
 
+def determine_search_category():
+    search_category = request.form.get('search_field')
+    if session['search_category'] is None or session['search_category'] == "":
+        session['search_category'] = search_category
+    elif session['search_category']:
+        search_category = session['search_category']
+    return search_category if search_category else ""
+
 
 # route to search for existing probands
 @app.route('/search', methods=['POST', 'GET'])
@@ -246,31 +255,30 @@ def search():
     page, per_page, offset = get_page_args(page_parameter="page", per_page_parameter="per_page")
     if request.method == "POST":
         session['search'] = ""
+        session['search_category'] = ""
 
-    search_str = request.form.get('search_probands')
-    search_category = request.form.get('search_field')
-
-    if session['search'] is None or session['search'] == "":
-        session['search'] = search_str
-    elif session['search']:
-        search_str = session['search']
-    if search_str is None:
-        search_str = ""
-
+    # get search string and category to search in
+    search_category = determine_search_category()
     search_str = determine_search_string()
 
+    # search for probands matching the search criteria
+    search_result = crud.search_probands(search_str, search_category)
+    print("search string: ", search_str)
+    print("search category: ", search_category)
+    print("search result: ", search_result)
 
-    #genders = Gender.query.all()
     genders = crud.get_all_genders()
+
     if search_result is None:
         total = 0
     else:
         total = len(search_result)
+
     pagination_probands = crud.get_probands_with_pagination(search_result, offset=offset, per_page=per_page)
     pagination = Pagination(page=page, per_page=per_page, total=total,
                             css_framework='bootstrap4')
 
-    return render_template('probands.html', probandsList=search_result, genders=genders, page=page,
+    return render_template('probands.html', probandsList=pagination_probands, genders=genders, page=page,
                            per_page=per_page, pagination=pagination)
 
 

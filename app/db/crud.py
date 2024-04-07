@@ -285,7 +285,10 @@ def get_probands_with_pagination(probands, offset=0, per_page=12):
     :param per_page: Number of probands per page.
     :return: Paginated list of probands.
     """
-    return probands[offset: offset + per_page]
+    if probands is None:
+        return []
+    else:
+        return probands[offset: offset + per_page]
 
 
 def calculate_stddev_weight():
