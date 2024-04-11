@@ -3,6 +3,11 @@
 This is a database and python project for the database course of the DHBW Stuttgart. 
 It is a simple application to manage probands and their data such as names, birthdates, addresses and medical data.
 
+## Documentation
+
+Under the following link you can find the documentation of the project:
+[Documentation](docu/documentation.md)
+
 ## Features
 - Add, edit and delete probands
 - ....
