@@ -4,7 +4,7 @@
 
 The following diagram shows the entity-relationship-model of the database.
 
-![Entity-Relationship-Model](images/er-model.png)
+![Entity-Relationship-Model](erm.jpeg)
 
 
 
