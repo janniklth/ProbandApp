@@ -25,3 +25,8 @@ Under the following link you can find the documentation of the project:
 3. Run the initial.sql script to create the database
 4. Run the main.py file
 5. Open the browser and go to http://127.0.0.1:8080
+
+## Contributors
+Jannik Loth (Matrikelnr. 3584453)
+
+Annika Jung (Matrikelnr. xxxxxxx)
