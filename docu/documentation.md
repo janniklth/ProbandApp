@@ -3,23 +3,28 @@
 ## Entity-Relationship-Model
 
 The following diagram shows the entity-relationship-model of the database.
-
 ![Entity-Relationship-Model](erm.jpeg)
-
 
 
 ## Schema
 
-Medication (__id__: bigint, name: varchar(255)), 
+**Medication**(<ins>id</ins>: BIGINT, name: VARCHAR(255)),
 
-Gender (__id__: bigint, name: varchar(255)), 
+**Gender**(<ins>id</ins>: BIGINT, name: VARCHAR(255)), 
 
-Country (__id__: bigint, name: varchar(255), countrycode: varchar(255)), 
+**Country**(<ins>id</ins>: BIGINT, name: VARCHAR(255), countrycode: VARCHAR(255)), 
 
-Disease (__id__: bigint, name: varchar(255)), 
+**Disease**(<ins>id</ins>: BIGINT, name: VARCHAR(255)), 
 
-Proband (__id__: bigint, first_name: varchar(255), last_name: varchar(255), email: varchar(255), gender_id: bigint, birthday: date, weight: double(8, 2), height: double(8, 2), health: float, bmi: double(8, 2), country_id: bigint, is_active: boolean, last_changed: datetime), FK: country_id references Country, gender_id references Gender
+**Proband**(<ins>id</ins>: BIGINT, first_name: VARCHAR(255), last_name: VARCHAR(255), email: VARCHAR(255), gender_id: BIGINT, birthday: DATE, weight: DOUBLE(8, 2), height: DOUBLE(8, 2), health: FLOAT, bmi: DOUBLE(8, 2), country_id: BIGINT, is_active: BOOLEAN, last_changed: TIMESTAMP), FK: country_id --> Country.id, gender_id --> Gender.id
 
-ProbandMedication (__id__: bigint, proband_id: bigint, medication_id: bigint), FK: proband_id references Proband, medication_id references Medication
+**ProbandMedication**(<ins>id</ins>: BIGINT, proband_id: BIGINT, medication_id: BIGINT), FK: proband_id --> Proband.id, medication_id --> Medication.id
 
-ProbandDiseases (__id__: bigint, proband_id: bigint, sickness_id: bigint), FK: proband_id references Proband, sickness_id references Disease
+**ProbandDiseases**(<ins>id</ins>: BIGINT, proband_id: BIGINT, sickness_id: BIGINT), FK: proband_id --> Proband.id, sickness_id --> Disease.id
+
+
+## Contributors
+Jannik Loth (Matrikelnr. 3584453)
+
+Annika Jung (Matrikelnr. 5717275)
+
