@@ -5,13 +5,13 @@ from email_validator import validate_email, EmailNotValidError
 from sqlalchemy import func, inspect, text
 
 from app.db.session import get_db, engine
-from models.country import Country
-from models.diseases import Diseases
-from models.gender import Gender
-from models.medication import Medication
-from models.proband import Proband
-from models.probandDiseases import ProbandDiseases
-from models.probandMedication import ProbandMedication
+from app.models.country import Country
+from app.models.diseases import Diseases
+from app.models.gender import Gender
+from app.models.medication import Medication
+from app.models.proband import Proband
+from app.models.probandDiseases import ProbandDiseases
+from app.models.probandMedication import ProbandMedication
 
 
 def get_all_active_probands():
@@ -405,7 +405,7 @@ def adjust_female_avg_height(wanted_avg_height):
     diff = wanted_avg_height - avg
 
 
-def validate_proband_email():
+def validate_all_proband_email():
     with get_db() as db:
         all_probands = db.query(Proband).all()
         for proband in all_probands:
@@ -413,6 +413,15 @@ def validate_proband_email():
                 v = validate_email(proband.email)
             except EmailNotValidError as e:
                 print(f"Proband {proband.id} email is not a valid email: {str(e)}")
+
+
+def validate_mail_new_proband(_new_mail):
+    try:
+        v = validate_email(_new_mail)
+        return v
+    except EmailNotValidError as e:
+        print("new proband mail is not valid!")
+        return e
 
 
 def run_sql_script():

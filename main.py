@@ -16,9 +16,9 @@ import json
 
 from app.db import crud
 from app.db.session import get_db
-from models.gender import Gender
-from db.crud import handle_error
-from models.proband import Proband
+from app.models.gender import Gender
+from app.db.crud import handle_error
+from app.models.proband import Proband
 
 # create a new Flask app
 app = Flask(__name__)
@@ -45,7 +45,6 @@ mysql = MySQL(app)
 
 # Init DB
 db = SQLAlchemy(app)
-
 
 
 # def get_probands(items, offset=0, per_page=12):
@@ -240,6 +239,7 @@ def determine_search_string():
         search_str = session['search']
     return search_str if search_str else ""
 
+
 def determine_search_category():
     search_category = request.form.get('search_field')
     if session['search_category'] is None or session['search_category'] == "":
@@ -323,15 +323,21 @@ def update():
 def add():
     if request.method == 'POST':
         try:
+            valid_mail = crud.validate_mail_new_proband(request.form.get("email"))
+            if isinstance(valid_mail, Exception):
+                return render_template('/error.html', error_message=valid_mail)
 
-            gender_id = crud.get_gender_id(request.form.get("genselect"))
+            else:
 
-            crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
-                                request.form.get("email"), gender_id, request.form.get("birthday"),
-                                request.form.get("height"), request.form.get("weight"), request.form.get("health"),
-                                sqlalchemy.true())
+                gender_id = crud.get_gender_id(request.form.get("genselect"))
 
-            return redirect(url_for('index'))
+                crud.create_proband(request.form.get("firstname"), request.form.get("lastname"),
+                                    request.form.get("email"), gender_id, request.form.get("birthday"),
+                                    request.form.get("height"), request.form.get("weight"),
+                                    request.form.get("health"),
+                                    sqlalchemy.true())
+
+                return redirect(url_for('index'))
         except Exception as e:
             handle_error(e)
             return render_template('/probands.html')
