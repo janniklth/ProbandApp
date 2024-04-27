@@ -18,6 +18,7 @@ def get_all_active_probands():
     with get_db() as db:
         return db.query(Proband).filter(Proband.is_active == 1).all()
 
+
 def get_all_inactive_probands():
     with get_db() as db:
         return db.query(Proband).filter(Proband.is_active == 0).all()
@@ -130,7 +131,9 @@ def search_probands(search_term, search_category):
             gender_id = get_gender_id(search_term)
             return db.query(Proband).filter(Proband.gender_id.like(f"%{gender_id}%") & Proband.is_active == 1).all()
         elif search_category == "birthday":
-            return db.query(Proband).filter(Proband.birthday.like(f"%{search_term}%") & Proband.is_active == 1).all()
+            return db.query(Proband).filter(func.date_format(Proband.birthday, "%Y-%m-%d").like(f"%{search_term}%")).filter(
+                Proband.is_active == 1).all()
+
         elif search_category == "weight":
             return db.query(Proband).filter(Proband.weight.like(f"%{search_term}%") & Proband.is_active == 1).all()
         elif search_category == "height":
@@ -304,12 +307,16 @@ def get_probands_with_pagination(probands, offset=0, per_page=12):
     else:
         return probands[offset: offset + per_page]
 
+
 def get_probands_age_filtered(func, gender_id):
     with get_db() as db:
         if gender_id != None:
-            return db.query(func).filter(Proband.is_active == 1).filter(Proband.gender_id == gender_id).filter(Proband.birthday < '2006-05-16').filter(Proband.birthday > '1964-05-16').scalar()
+            return db.query(func).filter(Proband.is_active == 1).filter(Proband.gender_id == gender_id).filter(
+                Proband.birthday < '2006-05-16').filter(Proband.birthday > '1964-05-16').scalar()
         else:
-            return db.query(func).filter(Proband.is_active == 1).filter(Proband.birthday < '2006-05-16').filter(Proband.birthday > '1964-05-16').scalar()
+            return db.query(func).filter(Proband.is_active == 1).filter(Proband.birthday < '2006-05-16').filter(
+                Proband.birthday > '1964-05-16').scalar()
+
 
 def calculate_stddev_weight():
     stddev = get_probands_age_filtered(func.stddev(Proband.weight), None)
