@@ -40,6 +40,27 @@ mysql = MySQL(app)
 db = SQLAlchemy(app)
 
 
+def determine_search_string():
+    search_str = request.form.get('search_probands')
+    if session['search'] is None or session['search'] == "":
+        session['search'] = search_str
+    elif session['search']:
+        search_str = session['search']
+    return search_str if search_str else ""
+
+
+def determine_search_category():
+    search_category = request.form.get('search_field')
+    if session['search_category'] is None or session['search_category'] == "":
+        session['search_category'] = search_category
+    elif session['search_category']:
+        search_category = session['search_category']
+    return search_category if search_category else ""
+
+
+### - - - - - - - Routes - - - - - - - ###
+
+# route to get all probands
 @app.route('/probands', methods=['POST', 'GET'])
 def probands():
     if request.method == 'GET':
@@ -62,24 +83,6 @@ def probands():
 
     else:
         return render_template('probands.html')
-
-
-def determine_search_string():
-    search_str = request.form.get('search_probands')
-    if session['search'] is None or session['search'] == "":
-        session['search'] = search_str
-    elif session['search']:
-        search_str = session['search']
-    return search_str if search_str else ""
-
-
-def determine_search_category():
-    search_category = request.form.get('search_field')
-    if session['search_category'] is None or session['search_category'] == "":
-        session['search_category'] = search_category
-    elif session['search_category']:
-        search_category = session['search_category']
-    return search_category if search_category else ""
 
 
 # route to search for existing probands
