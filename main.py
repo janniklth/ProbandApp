@@ -456,9 +456,9 @@ def report():
             'avg weight female': avg_weight_female
         }
 
-        print(report_data)
 
-        return render_template('report.html', report=report_data)
+        # TODO: add adjusted data
+        return render_template('report.html', old_report=report_data, adjusted_report=report_data)
 
     else:
         return render_template('report.html')

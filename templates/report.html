@@ -1,18 +1,33 @@
 {% extends 'layout.html' %}
 {% block content %}
  <br>
-      <div class="container" style="border: solid 2px #D1D1D1;">
+<div style="display: flex;">
+  <div class="container" style="border: solid 2px #D1D1D1; margin-right: 20px;">
+    <h2>Old Data</h2>
+    {% if old_report %}
+         <table>
+             {% for key, value in old_report.items() %}
+                 <tr>
+                     <td>{{ key }}</td>
+                     <td>{{ value }}</td>
+                 </tr>
+             {% endfor %}
+    {% endif %}
+    </table>
+  </div>
 
-      {% if report %}
-           <table >
-               {% for key, value in report.items() %}
-                   <tr>
-                       <td>{{ key }}</td>
-                       <td>{{ value }}</td>
-                   </tr>
-               {% endfor %}
-      {% endif %}
- </table>
-      </div>
-
+  <div class="container" style="border: solid 2px #D1D1D1;">
+    <h2>Ajusted Data</h2>
+    {% if adjusted_report %}
+         <table>
+             {% for key, value in adjusted_report.items() %}
+                 <tr>
+                     <td>{{ key }}</td>
+                     <td>{{ value }}</td>
+                 </tr>
+             {% endfor %}
+    {% endif %}
+    </table>
+  </div>
+</div>
 {% endblock %}
