@@ -39,7 +39,7 @@ mysql = MySQL(app)
 # Init DB
 db = SQLAlchemy(app)
 
-
+# determine search string from form
 def determine_search_string():
     search_str = request.form.get('search_probands')
     if session['search'] is None or session['search'] == "":
@@ -49,6 +49,7 @@ def determine_search_string():
     return search_str if search_str else ""
 
 
+# determine search category from form
 def determine_search_category():
     search_category = request.form.get('search_field')
     if session['search_category'] is None or session['search_category'] == "":

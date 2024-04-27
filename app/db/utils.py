@@ -77,7 +77,6 @@ def calculate_avg_female_weight():
     return avg if avg else 0.0
 
 
-
 ### - - - - Helper functions for adjusting the average values of the probands - - - - ###
 def adjust_male_avg_weight(wanted_avg_weight):
     # get current average and calculate difference
@@ -110,6 +109,7 @@ def validate_mail_new_proband(_new_mail):
     except EmailNotValidError as e:
         print("new proband mail is not valid!")
         return e
+
 
 def handle_error(e):
     print("Action failed!")
