@@ -300,85 +300,79 @@ def get_probands_with_pagination(probands, offset=0, per_page=12):
     else:
         return probands[offset: offset + per_page]
 
+def get_probands_age_filtered(func, gender_id):
+    with get_db() as db:
+        if gender_id != None:
+            return db.query(func).filter(Proband.is_active == 1).filter(Proband.gender_id == gender_id).filter(Proband.birthday < '2006-05-16').filter(Proband.birthday > '1964-05-16').scalar()
+        else:
+            return db.query(func).filter(Proband.is_active == 1).filter(Proband.birthday < '2006-05-16').filter(Proband.birthday > '1964-05-16').scalar()
 
 def calculate_stddev_weight():
-    with get_db() as db:
-        std = db.query(func.stddev(Proband.weight)).scalar()
-        return std if std else 0.0
+    stddev = get_probands_age_filtered(func.stddev(Proband.weight), None)
+    return stddev if stddev else 0.0
 
 
 def calculate_stddev_height():
-    with get_db() as db:
-        std = db.query(func.stddev(Proband.height)).scalar()
-        return std if std else 0.0
+    stddev = get_probands_age_filtered(func.stddev(Proband.height), None)
+    return stddev if stddev else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_male_height():
-    with get_db() as db:
-        std = db.query(func.stddev(Proband.height)).filter(Proband.gender_id == 1).scalar()
-        return std if std else 0.0
+    stddev = get_probands_age_filtered(func.stddev(Proband.height), 1)
+    return stddev if stddev else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_female_height():
-    with get_db() as db:
-        std = db.query(func.stddev(Proband.height)).filter(Proband.gender_id == 2).scalar()
-        return std if std else 0.0
+    stddev = get_probands_age_filtered(func.stddev(Proband.height), 2)
+    return stddev if stddev else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_male_weight():
-    with get_db() as db:
-        std = db.query(func.stddev(Proband.weight)).filter(Proband.gender_id == 1).scalar()
-        return std if std else 0.0
+    stddev = get_probands_age_filtered(func.stddev(Proband.weight), 1)
+    return stddev if stddev else 0.0
 
 
 # TODO: get gender id from database
 def calculate_stddev_female_weight():
-    with get_db() as db:
-        std = db.query(func.stddev(Proband.weight)).filter(Proband.gender_id == 2).scalar()
-        return std if std else 0.0
+    stddev = get_probands_age_filtered(func.stddev(Proband.weight), 2)
+    return stddev if stddev else 0.0
 
 
 def calculate_avg_weight():
-    with get_db() as db:
-        avg = db.query(func.avg(Proband.weight)).scalar()
-        return avg if avg else 0.0
+    avg = get_probands_age_filtered(func.avg(Proband.weight), None)
+    return avg if avg else 0.0
 
 
 def calculate_avg_height():
-    with get_db() as db:
-        avg = db.query(func.avg(Proband.height)).scalar()
-        return avg if avg else 0.0
+    avg = get_probands_age_filtered(func.avg(Proband.height), None)
+    return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_male_height():
-    with get_db() as db:
-        avg = db.query(func.avg(Proband.height)).filter(Proband.gender_id == 1).scalar()
-        return avg if avg else 0.0
+    avg = get_probands_age_filtered(func.avg(Proband.height), 1)
+    return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_female_height():
-    with get_db() as db:
-        avg = db.query(func.avg(Proband.height)).filter(Proband.gender_id == 2).scalar()
-        return avg if avg else 0.0
+    avg = get_probands_age_filtered(func.avg(Proband.height), 2)
+    return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_male_weight():
-    with get_db() as db:
-        avg = db.query(func.avg(Proband.weight)).filter(Proband.gender_id == 1).scalar()
-        return avg if avg else 0.0
+    avg = get_probands_age_filtered(func.avg(Proband.weight), 1)
+    return avg if avg else 0.0
 
 
 # TODO: get gender id from database
 def calculate_avg_female_weight():
-    with get_db() as db:
-        avg = db.query(func.avg(Proband.weight)).filter(Proband.gender_id == 2).scalar()
-        return avg if avg else 0.0
+    avg = get_probands_age_filtered(func.avg(Proband.weight), 2)
+    return avg if avg else 0.0
 
 
 def adjust_male_avg_weight(wanted_avg_weight):
