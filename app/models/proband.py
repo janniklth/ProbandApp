@@ -1,8 +1,8 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.db.base_class import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger, Integer, UUID, String, Column, ForeignKey, Date, Float, Boolean, TIMESTAMP, text
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import BigInteger, String, Column, ForeignKey, Date, Float, Boolean, TIMESTAMP, text
 
 
 class Proband(Base):

@@ -4,13 +4,6 @@ from sqlalchemy.orm import sessionmaker
 from typing import Generator
 from contextlib import contextmanager
 
-
-from app.db.base_class import Base
-
-from app.models.proband import Proband
-from app.models.gender import Gender
-from app.models.country import Country
-
 # MySQL Settings
 MYSQL_HOST = "127.0.0.1"
 MYSQL_USER = "root"

@@ -1,6 +1,5 @@
 from typing import Any
 
-from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 

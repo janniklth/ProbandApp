@@ -1,6 +1,6 @@
 from app.db.base_class import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, UUID, String, Column, ForeignKey, Date, Float, Boolean, BigInteger
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import  String, BigInteger
 
 class Country(Base):
     __tablename__ = "COUNTRY"

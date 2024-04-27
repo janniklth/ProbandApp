@@ -1,24 +1,16 @@
-from random import random, randint
-
 import sqlalchemy
-import flask
+
 from flask import render_template, request, session, redirect, url_for
 from flask_mysqldb import MySQL
 from flask_paginate import Pagination, get_page_args
 from flask_sqlalchemy import SQLAlchemy
-from pydantic import ValidationError
-from sqlalchemy import func, text
-import datetime
+
 import os
-import openai
 from flask import Flask
 import json
 
 from app.db import crud
-from app.db.session import get_db
-from app.models.gender import Gender
 from app.db.utils import handle_error
-from app.models.proband import Proband
 from app.db import utils
 
 # create a new Flask app
