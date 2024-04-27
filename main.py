@@ -17,8 +17,9 @@ import json
 from app.db import crud
 from app.db.session import get_db
 from app.models.gender import Gender
-from app.db.crud import handle_error
+from app.db.utils import handle_error
 from app.models.proband import Proband
+from app.db import utils
 
 # create a new Flask app
 app = Flask(__name__)
@@ -323,7 +324,7 @@ def update():
 def add():
     if request.method == 'POST':
         try:
-            valid_mail = crud.validate_mail_new_proband(request.form.get("email"))
+            valid_mail = utils.validate_mail_new_proband(request.form.get("email"))
             if isinstance(valid_mail, Exception):
                 return render_template('/error.html', error_message=valid_mail)
 
@@ -419,20 +420,20 @@ def report():
         total_inactive_probands = len(inactive_probands)
 
         # Calculate standard deviations
-        stddev_weight = round(crud.calculate_stddev_weight(), 3)
-        stddev_height = round(crud.calculate_stddev_height(), 3)
-        stddev_height_male = round(crud.calculate_stddev_male_height(), 3)
-        stddev_height_female = round(crud.calculate_stddev_female_height(), 3)
-        stddev_weight_male = round(crud.calculate_stddev_male_weight(), 3)
-        stddev_weight_female = round(crud.calculate_stddev_female_weight(), 3)
+        stddev_weight = round(utils.calculate_stddev_weight(), 3)
+        stddev_height = round(utils.calculate_stddev_height(), 3)
+        stddev_height_male = round(utils.calculate_stddev_male_height(), 3)
+        stddev_height_female = round(utils.calculate_stddev_female_height(), 3)
+        stddev_weight_male = round(utils.calculate_stddev_male_weight(), 3)
+        stddev_weight_female = round(utils.calculate_stddev_female_weight(), 3)
 
         # Calculate averages
-        avg_height = round(crud.calculate_avg_height(), 2)
-        avg_height_male = round(crud.calculate_avg_male_height(), 2)
-        avg_height_female = round(crud.calculate_avg_female_height(), 2)
-        avg_weight = round(crud.calculate_avg_weight(), 2)
-        avg_weight_male = round(crud.calculate_avg_male_weight(), 2)
-        avg_weight_female = round(crud.calculate_avg_female_weight(), 2)
+        avg_height = round(utils.calculate_avg_height(), 2)
+        avg_height_male = round(utils.calculate_avg_male_height(), 2)
+        avg_height_female = round(utils.calculate_avg_female_height(), 2)
+        avg_weight = round(utils.calculate_avg_weight(), 2)
+        avg_weight_male = round(utils.calculate_avg_male_weight(), 2)
+        avg_weight_female = round(utils.calculate_avg_female_weight(), 2)
 
         # Create report data
         report_data = {
