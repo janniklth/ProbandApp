@@ -18,6 +18,10 @@ def get_all_active_probands():
     with get_db() as db:
         return db.query(Proband).filter(Proband.is_active == 1).all()
 
+def get_all_inactive_probands():
+    with get_db() as db:
+        return db.query(Proband).filter(Proband.is_active == 0).all()
+
 
 def get_all_genders():
     with get_db() as db:

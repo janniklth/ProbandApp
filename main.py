@@ -410,14 +410,11 @@ def report():
         genders = crud.get_all_genders()
 
         # Get all probands
-        probands = crud.get_all_active_probands()
-
-        # Filter active and inactive probands
-        active_probands = [proband for proband in probands if proband.is_active]
-        inactive_probands = [proband for proband in probands if not proband.is_active]
+        active_probands = crud.get_all_active_probands()
+        inactive_probands = crud.get_all_inactive_probands()
 
         # Calculate total probands and counts
-        total_probands = len(probands)
+        total_probands = len(active_probands) + len(inactive_probands)
         total_active_probands = len(active_probands)
         total_inactive_probands = len(inactive_probands)
 
