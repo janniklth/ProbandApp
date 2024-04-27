@@ -224,10 +224,10 @@ def load_initial_data():
                     print("we seeded the db succesfully")
 
                     # adjust average weight and height for male and female probands
-                    adjust_male_avg_height(180.0)
-                    adjust_male_avg_weight(88.0)
-                    adjust_female_avg_height(167.0)
-                    adjust_female_avg_weight(69.0)
+                    utils.adjust_male_avg_height(180.0)
+                    utils.adjust_male_avg_weight(88.0)
+                    utils.adjust_female_avg_height(167.0)
+                    utils.adjust_female_avg_weight(69.0)
 
 
 
