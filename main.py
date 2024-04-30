@@ -266,11 +266,15 @@ def report():
 
 
 if __name__ == "__main__":
-    # load initial data if database is empty
+
+    # create tables and load initial data
     print("running sql script")
     crud.run_sql_script()
     print("running initial data")
     crud.load_initial_data()
+
+    # adjust average height and weight for male and female
+    utils.adjust_avg_height_weight()
 
     # run the app
     app.run(debug=True, port=8080)

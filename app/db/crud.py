@@ -24,6 +24,9 @@ def get_all_inactive_probands():
     with get_db() as db:
         return db.query(Proband).filter(Proband.is_active == 0).all()
 
+def get_active_probands_by_gender(gender_id):
+    with get_db() as db:
+        return db.query(Proband).filter(Proband.is_active == 1).filter(Proband.gender_id == gender_id).all()
 
 def get_all_genders():
     with get_db() as db:
@@ -66,6 +69,24 @@ def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername,
         except Exception as e:
             utils.handle_error(e)
 
+
+def update_height(proband_id, new_height):
+    with get_db() as db:
+        try:
+            proband = db.query(Proband).filter(Proband.id == proband_id).first()
+            proband.height = new_height
+            db.commit()
+        except Exception as e:
+            utils.handle_error(e)
+
+def update_weight(proband_id, new_weight):
+    with get_db() as db:
+        try:
+            proband = db.query(Proband).filter(Proband.id == proband_id).first()
+            proband.weight = new_weight
+            db.commit()
+        except Exception as e:
+            utils.handle_error(e)
 
 def create_proband(_first_name, _last_name, _email, _gender, _birthday, _weight, _height, _health="1.0", _is_active=1):
     with get_db() as db:
@@ -223,11 +244,7 @@ def load_initial_data():
                         db.commit()
                     print("we seeded the db succesfully")
 
-                    # adjust average weight and height for male and female probands
-                    utils.adjust_male_avg_height(180.0)
-                    utils.adjust_male_avg_weight(88.0)
-                    utils.adjust_female_avg_height(167.0)
-                    utils.adjust_female_avg_weight(69.0)
+
 
 
 
