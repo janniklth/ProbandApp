@@ -30,6 +30,8 @@ docker-compose up
 ```
 3. Open the browser and go to http://127.0.0.1:8080
 
+Info: The startup can take a few minutes because of the installation and mail validation. You can't see the prints until everything run successfully.
+
 ## Contributors
 Jannik Loth (Matrikelnr. 3584453)
 
