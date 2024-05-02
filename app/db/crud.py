@@ -244,10 +244,6 @@ def load_initial_data():
                         db.commit()
                     print("we seeded the db succesfully")
 
-
-
-
-
                 else:
                     print("proband table already filled with data")
                     find_duplicates()

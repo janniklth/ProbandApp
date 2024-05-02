@@ -13,6 +13,7 @@ from app.db import crud
 from app.db.utils import handle_error
 from app.db import utils
 
+
 # create a new Flask app
 app = Flask(__name__)
 
@@ -267,14 +268,21 @@ def report():
 
 if __name__ == "__main__":
 
+    print("- - - - - - - - - app started - - - - - - - - -")
+
     # create tables and load initial data
-    print("running sql script")
+    print("running sql script...")
     crud.run_sql_script()
-    print("running initial data")
+    print("running initial data...")
     crud.load_initial_data()
+
+    # validate all mails
+    print("validating all mails...")
+    crud.validate_all_proband_email()
 
     # adjust average height and weight for male and female
     utils.adjust_avg_height_weight()
 
     # run the app
+    print("running app...")
     app.run(debug=True, host="0.0.0.0", port=8080)
