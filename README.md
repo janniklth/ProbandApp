@@ -9,8 +9,10 @@ Under the following link you can find the documentation of the project:
 [Documentation](docu/documentation.md)
 
 ## Features
-- Add, edit and delete probands
-- ....
+- add, edit and delete probands
+- view all probands
+- search for probands by all attributes
+- get a report of all probands
 
 ## Technologies
 - Python
@@ -18,15 +20,9 @@ Under the following link you can find the documentation of the project:
 - SQLAlchemy
 - MYSQL
 
-## Installation
-
-1. Clone the repository
-2. Install the requirements
-3. Run the initial.sql script to create the database
-4. Run the main.py file
-5. Open the browser and go to http://127.0.0.1:8080
 
 ## Installation with Docker
+Preconditions: You need to have Docker installed on your machine.
 1. Clone the repository 
 2. Run the following command in the root directory of the project:
 ```bash
@@ -37,4 +33,4 @@ docker-compose up
 ## Contributors
 Jannik Loth (Matrikelnr. 3584453)
 
-Annika Jung (Matrikelnr. xxxxxxx)
+Annika Jung (Matrikelnr. 5717275)
