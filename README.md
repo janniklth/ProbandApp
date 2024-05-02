@@ -26,6 +26,14 @@ Under the following link you can find the documentation of the project:
 4. Run the main.py file
 5. Open the browser and go to http://127.0.0.1:8080
 
+## Installation with Docker
+1. Clone the repository 
+2. Run the following command in the root directory of the project:
+```bash
+docker-compose up
+```
+3. Open the browser and go to http://127.0.0.1:8080
+
 ## Contributors
 Jannik Loth (Matrikelnr. 3584453)
 
