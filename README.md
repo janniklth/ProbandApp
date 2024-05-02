@@ -22,7 +22,7 @@ Under the following link you can find the documentation of the project:
 
 
 ## Installation with Docker
-Preconditions: You need to have Docker installed on your machine.
+Preconditions: You need to have Docker installed and running on your machine.
 1. Clone the repository 
 2. Run the following command in the root directory of the project:
 ```bash
