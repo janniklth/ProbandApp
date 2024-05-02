@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    command: ["./entrypoint.sh"]
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - PYTHONPATH=/app
+
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: change-me
+      MYSQL_DATABASE: dbproject
+    ports:
+      - 3306:3306

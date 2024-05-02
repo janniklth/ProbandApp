@@ -17,9 +17,9 @@ from app.db import utils
 app = Flask(__name__)
 
 # load openai config
-with open('app/config.json') as f:
-    config = json.load(f)
-    openai_api_key = config['openai']['api_key']
+# with open('app/config.json') as f:
+#     config = json.load(f)
+#     openai_api_key = config['openai']['api_key']
 
 app.config['SECRET_KEY'] = os.urandom(24)
 app.secret_key = "super secret key"
@@ -29,7 +29,7 @@ DB_CONFIG = {
     "MYSQL_USER": "root",
     "MYSQL_PASSWORD": "change-me",
     "MYSQL_DB": "dbproject",
-    "SQLALCHEMY_DATABASE_URI": "mysql://root:@127.0.0.1:3306/dbproject",
+    "SQLALCHEMY_DATABASE_URI": "mysql://root:@db:3306/dbproject",
 }
 
 app.config.update(DB_CONFIG)
@@ -277,4 +277,4 @@ if __name__ == "__main__":
     utils.adjust_avg_height_weight()
 
     # run the app
-    app.run(debug=True, port=8080)
+    app.run(debug=True, host="0.0.0.0", port=8080)

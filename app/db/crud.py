@@ -12,7 +12,7 @@ from app.models.medication import Medication
 from app.models.proband import Proband
 from app.models.probandDiseases import ProbandDiseases
 from app.models.probandMedication import ProbandMedication
-from app.db import utils
+# from app.db.utils import handle_error
 
 
 def get_all_active_probands():
@@ -41,7 +41,7 @@ def get_gender_id(gender_name):
             return gender_id
     except Exception as invalid_gender_name:
         print(f"Gender name not found in database!")
-        utils.handle_error(invalid_gender_name)
+        handle_error(invalid_gender_name)
 
 
 def get_proband_by_id(proband_id):
@@ -67,7 +67,7 @@ def update_proband(oldemail, newlastname, newfirstname, newemail, newgendername,
 
             db.commit()
         except Exception as e:
-            utils.handle_error(e)
+            handle_error(e)
 
 
 def update_height(proband_id, new_height):
@@ -77,7 +77,7 @@ def update_height(proband_id, new_height):
             proband.height = new_height
             db.commit()
         except Exception as e:
-            utils.handle_error(e)
+            handle_error(e)
 
 def update_weight(proband_id, new_weight):
     with get_db() as db:
@@ -86,7 +86,7 @@ def update_weight(proband_id, new_weight):
             proband.weight = new_weight
             db.commit()
         except Exception as e:
-            utils.handle_error(e)
+            handle_error(e)
 
 def create_proband(_first_name, _last_name, _email, _gender, _birthday, _weight, _height, _health="1.0", _is_active=1):
     with get_db() as db:
@@ -292,7 +292,7 @@ def get_medications_for_proband(proband_id: int) -> List[int]:
 
 # TODO: implement duplicates function
 def find_duplicates():
-    with (get_db() as db):
+    with get_db() as db:
         subquery = db.query(Proband.email, func.count(Proband.email).label("email_count")).group_by(
             Proband.email).having(func.count(Proband.email) > 1).subquery()
 
@@ -360,3 +360,8 @@ def run_sql_script():
                 transaction.rollback()
             else:
                 print("Script executed successfully.")
+
+
+def handle_error(e):
+    print("Action failed!")
+    print(e)

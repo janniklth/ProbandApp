@@ -1,6 +1,6 @@
 from email_validator import validate_email, EmailNotValidError
 
-from db.crud import get_probands_age_filtered, get_all_active_probands, get_all_inactive_probands, update_height, \
+from app.db.crud import get_probands_age_filtered, get_all_active_probands, get_all_inactive_probands, update_height, \
     update_weight, get_active_probands_by_gender
 
 from sqlalchemy import func

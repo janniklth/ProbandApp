@@ -5,12 +5,13 @@ from typing import Generator
 from contextlib import contextmanager
 
 # MySQL Settings
-MYSQL_HOST = "127.0.0.1"
+MYSQL_HOST = "db"
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "change-me"
 MYSQL_DB = "dbproject"
 MYSQL_PORT = "3306"
 SQLALCHEMY_DATABASE_URI = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
+
 if not database_exists(SQLALCHEMY_DATABASE_URI): create_database(SQLALCHEMY_DATABASE_URI)
 # create a new engine
 engine = create_engine(
